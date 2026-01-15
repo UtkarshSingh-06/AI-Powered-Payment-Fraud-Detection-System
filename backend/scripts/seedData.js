@@ -218,11 +218,7 @@ async function seedDatabase() {
     console.log(`✅ Seeded ${fraudLogs.length} fraud logs`);
     
     console.log('✨ Database seeding completed!');
-    console.log('\n📝 Default Login Credentials:');
-    console.log('Admin: admin@frauddetection.com / admin123');
-    console.log('User 1: john.doe@example.com / password123');
-    console.log('User 2: jane.smith@example.com / password123');
-    console.log('User 3: bob.wilson@example.com / password123');
+    console.log('\n✅ Sample users and transactions have been created.');
     
   } catch (error) {
     console.error('❌ Error seeding database:', error);
