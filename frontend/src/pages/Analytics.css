@@ -1,0 +1,20 @@
+.analytics-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.date-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.charts-grid .card {
+  margin-bottom: 0;
+}
