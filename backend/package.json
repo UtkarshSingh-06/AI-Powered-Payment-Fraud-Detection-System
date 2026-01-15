@@ -1,7 +1,7 @@
 {
-  "name": "fraud-detection-backend",
+  "name": "fraudshield-ai-backend",
   "version": "1.0.0",
-  "description": "Backend API for AI-Powered Payment Fraud Detection System",
+  "description": "Backend API for FraudShield AI - AI-Powered Payment Fraud Detection System",
   "main": "server.js",
   "type": "module",
   "scripts": {
