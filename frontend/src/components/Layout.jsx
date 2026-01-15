@@ -27,7 +27,8 @@ function Layout() {
     <div className="layout">
       <nav className="sidebar">
         <div className="sidebar-header">
-          <h2>Fraud Detection</h2>
+          <h2>FraudShield AI</h2>
+          <p className="sidebar-tagline">The AI based fraud payment detector</p>
           <p className="user-name">{user?.name}</p>
           <p className="user-role">{user?.role === 'admin' ? 'Administrator' : 'User'}</p>
         </div>
