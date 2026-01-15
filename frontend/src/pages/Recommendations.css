@@ -1,0 +1,125 @@
+.recommendations-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.recommendation-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-card.priority-high {
+  border-left-color: #ef4444;
+}
+
+.recommendation-card.priority-medium {
+  border-left-color: #f59e0b;
+}
+
+.recommendation-card.priority-low {
+  border-left-color: #10b981;
+}
+
+.recommendation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.recommendation-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+}
+
+.recommendation-icon .icon-high {
+  color: #ef4444;
+}
+
+.recommendation-icon .icon-medium {
+  color: #f59e0b;
+}
+
+.recommendation-icon .icon-low {
+  color: #10b981;
+}
+
+.recommendation-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.recommendation-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.recommendation-description {
+  color: #374151;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.recommendation-explanation,
+.recommendation-action {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+.recommendation-explanation strong,
+.recommendation-action strong {
+  display: block;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.recommendation-explanation p,
+.recommendation-action p {
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon {
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #6b7280;
+}
