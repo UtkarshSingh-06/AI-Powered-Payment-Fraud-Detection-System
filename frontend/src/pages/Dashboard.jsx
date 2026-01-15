@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import BlurText from '../components/BlurText';
 import { 
   TrendingUp, 
   AlertTriangle, 
@@ -8,7 +9,9 @@ import {
   DollarSign,
   Activity,
   CheckCircle,
-  XCircle
+  XCircle,
+  Zap,
+  Eye
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -59,67 +62,117 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
+      <div className="dashboard-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
+      
       <div className="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Welcome back, {user?.name}! Here's your payment fraud overview.</p>
+        <div className="header-content">
+          <BlurText 
+            text="Dashboard"
+            className="dashboard-title"
+            delay={100}
+            animateBy="words"
+            direction="top"
+            stepDuration={0.4}
+            animationFrom={{ filter: 'blur(15px)', opacity: 0, y: -30 }}
+            animationTo={[
+              { filter: 'blur(8px)', opacity: 0.6, y: 5 },
+              { filter: 'blur(0px)', opacity: 1, y: 0 }
+            ]}
+          />
+          <p className="dashboard-subtitle">
+            Welcome back, <span className="highlight-name">{user?.name}</span>! Here's your payment fraud overview.
+          </p>
+        </div>
       </div>
 
       {/* Summary Cards */}
       <div className="stats-grid">
-        <div className="stat-card">
+        <div className="stat-card glass-card">
+          <div className="card-glow"></div>
           <div className="stat-icon stat-primary">
-            <DollarSign size={24} />
+            <DollarSign size={28} />
           </div>
           <div className="stat-content">
             <p className="stat-label">Total Transactions</p>
             <p className="stat-value">{summary.total || 0}</p>
+            <div className="stat-trend">
+              <Activity size={14} />
+              <span>All time</span>
+            </div>
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card glass-card">
+          <div className="card-glow glow-success"></div>
           <div className="stat-icon stat-success">
-            <CheckCircle size={24} />
+            <CheckCircle size={28} />
           </div>
           <div className="stat-content">
             <p className="stat-label">Safe Transactions</p>
             <p className="stat-value">{summary.safe || 0}</p>
+            <div className="stat-trend">
+              <Shield size={14} />
+              <span>Verified</span>
+            </div>
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card glass-card">
+          <div className="card-glow glow-warning"></div>
           <div className="stat-icon stat-warning">
-            <AlertTriangle size={24} />
+            <AlertTriangle size={28} />
           </div>
           <div className="stat-content">
             <p className="stat-label">Suspicious</p>
             <p className="stat-value">{summary.suspicious || 0}</p>
+            <div className="stat-trend">
+              <Eye size={14} />
+              <span>Under review</span>
+            </div>
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card glass-card">
+          <div className="card-glow glow-danger"></div>
           <div className="stat-icon stat-danger">
-            <XCircle size={24} />
+            <XCircle size={28} />
           </div>
           <div className="stat-content">
             <p className="stat-label">Fraudulent</p>
             <p className="stat-value">{summary.fraudulent || 0}</p>
+            <div className="stat-trend">
+              <Zap size={14} />
+              <span>Blocked</span>
+            </div>
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card glass-card">
+          <div className="card-glow glow-info"></div>
           <div className="stat-icon stat-info">
-            <TrendingUp size={24} />
+            <TrendingUp size={28} />
           </div>
           <div className="stat-content">
             <p className="stat-label">Fraud Rate</p>
             <p className="stat-value">{summary.fraudRate || 0}%</p>
+            <div className="stat-trend">
+              <TrendingUp size={14} />
+              <span>Real-time</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Recent Transactions */}
-      <div className="card">
-        <h2 className="card-title">Recent Transactions</h2>
+      <div className="card glass-card transactions-card">
+        <div className="card-header">
+          <h2 className="card-title">Recent Transactions</h2>
+          <div className="card-header-accent"></div>
+        </div>
         <div className="table-container">
           <table className="data-table">
             <thead>
