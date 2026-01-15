@@ -1,4 +1,4 @@
-# AI-Powered Payment Fraud Detection System
+# FraudShield AI - The AI based fraud payment detector
 
 A comprehensive full-stack web application for detecting and preventing payment fraud using AI-powered risk analysis, real-time monitoring, and intelligent recommendations.
 
@@ -157,24 +157,6 @@ npm run dev
 ```
 
 The frontend will run on `http://localhost:3000`
-
-## Default Login Credentials
-
-After running the seed script, you can use these credentials:
-
-### Admin Account
-- **Email**: `admin@frauddetection.com`
-- **Password**: `admin123`
-
-### User Accounts
-- **Email**: `john.doe@example.com`
-- **Password**: `password123`
-
-- **Email**: `jane.smith@example.com`
-- **Password**: `password123`
-
-- **Email**: `bob.wilson@example.com`
-- **Password**: `password123`
 
 ## Usage Guide
 
