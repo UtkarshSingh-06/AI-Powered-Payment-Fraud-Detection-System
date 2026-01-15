@@ -1,0 +1,78 @@
+.blur-text-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.blur-text {
+  font-size: var(--font-size, clamp(2rem, 5vw, 4rem));
+  font-weight: var(--font-weight, 700);
+  position: relative;
+  display: inline-block;
+  line-height: 1.1;
+}
+
+/* Sharp text layer */
+.blur-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient, linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ec4899 100%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  z-index: 2;
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+
+/* Blurred text layer */
+.blur-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient, linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ec4899 100%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: blur(var(--blur-amount, 8px));
+  z-index: 1;
+  opacity: 0.8;
+  animation: blurTextAnimation 4s ease-in-out infinite;
+}
+
+/* Base text (hidden, used for spacing) */
+.blur-text {
+  color: transparent;
+  user-select: none;
+}
+
+.blur-text-wrapper:hover .blur-text::before {
+  opacity: 1;
+}
+
+.blur-text-wrapper:hover .blur-text::after {
+  filter: blur(calc(var(--blur-amount, 8px) * 0.3));
+  opacity: 0.4;
+}
+
+@keyframes blurTextAnimation {
+  0%, 100% {
+    filter: blur(var(--blur-amount, 8px));
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    filter: blur(calc(var(--blur-amount, 8px) * 1.2));
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+}
