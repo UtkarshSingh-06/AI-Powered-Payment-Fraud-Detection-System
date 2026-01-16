@@ -48,7 +48,7 @@ function Register() {
                 <Shield size={48} />
               </div>
               <BlurText 
-                text="FraudShield AI - The AI based fraud payment detector"
+                text="FraudShield AI - UPI Fraud Detection Platform"
                 className="auth-main-title"
                 delay={80}
                 animateBy="words"
@@ -58,9 +58,9 @@ function Register() {
             </div>
             
             <p className="auth-description-text">
-              Create your account and start protecting your payments today. Get access to real-time 
-              fraud detection, advanced analytics, and personalized security recommendations powered 
-              by cutting-edge AI technology.
+              Create your account and start protecting your UPI payments today. Get access to real-time 
+              UPI fraud detection, advanced analytics, and personalized security recommendations powered 
+              by cutting-edge AI technology designed specifically for India's UPI ecosystem.
             </p>
 
             <div className="features-list">
@@ -68,29 +68,29 @@ function Register() {
                 <div className="feature-icon">
                   <Shield size={20} />
                 </div>
-                <span>Enterprise-grade security and encryption</span>
+                <span>RBI compliant UPI security and encryption</span>
               </div>
               <div className="feature-item">
                 <div className="feature-icon">
                   <Sparkles size={20} />
                 </div>
-                <span>AI-powered fraud prevention</span>
+                <span>AI-powered UPI fraud prevention</span>
               </div>
               <div className="feature-item">
                 <div className="feature-icon">
                   <Mail size={20} />
                 </div>
-                <span>Real-time alerts and notifications</span>
+                <span>Real-time UPI alerts and notifications</span>
               </div>
             </div>
 
             <div className="auth-stats">
               <div className="stat-item">
-                <div className="stat-value">1000+</div>
-                <div className="stat-label">Active Users</div>
+                <div className="stat-value">500K+</div>
+                <div className="stat-label">UPI Transactions</div>
               </div>
               <div className="stat-item">
-                <div className="stat-value">$10M+</div>
+                <div className="stat-value">₹50M+</div>
                 <div className="stat-label">Protected</div>
               </div>
               <div className="stat-item">
