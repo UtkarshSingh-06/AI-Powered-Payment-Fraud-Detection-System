@@ -22,7 +22,7 @@ function Register() {
 
     try {
       await register(email, password, name);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
