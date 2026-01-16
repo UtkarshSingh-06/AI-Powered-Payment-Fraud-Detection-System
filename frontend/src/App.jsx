@@ -30,11 +30,11 @@ function AdminRoute({ children }) {
   }
   
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
   
   if (user.role !== 'admin') {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/app/dashboard" />;
   }
   
   return children;
@@ -45,18 +45,24 @@ function AppRoutes() {
   
   return (
     <Routes>
+      {/* Landing/Home Page - Show About page for non-authenticated users */}
+      <Route 
+        path="/" 
+        element={!user ? <About /> : <Navigate to="/app/dashboard" />} 
+      />
       <Route path="/about" element={<About />} />
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
-      <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/app/dashboard" />} />
+      <Route path="/register" element={!user ? <Register /> : <Navigate to="/app/dashboard" />} />
+      {/* Protected Routes */}
       <Route
-        path="/"
+        path="/app"
         element={
           <PrivateRoute>
             <Layout />
           </PrivateRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" />} />
+        <Route index element={<Navigate to="/app/dashboard" />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="transactions" element={<Transactions />} />
         <Route path="analytics" element={<Analytics />} />
@@ -70,6 +76,12 @@ function AppRoutes() {
           }
         />
       </Route>
+      {/* Redirect old dashboard route */}
+      <Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
+      <Route path="/transactions" element={<Navigate to="/app/transactions" />} />
+      <Route path="/analytics" element={<Navigate to="/app/analytics" />} />
+      <Route path="/recommendations" element={<Navigate to="/app/recommendations" />} />
+      <Route path="/admin" element={<Navigate to="/app/admin" />} />
     </Routes>
   );
 }
