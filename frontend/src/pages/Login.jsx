@@ -48,7 +48,7 @@ function Login() {
                 <Shield size={48} />
               </div>
               <BlurText 
-                text="FraudShield AI - The AI based fraud payment detector"
+                text="FraudShield AI - UPI Fraud Detection Platform"
                 className="auth-main-title"
                 delay={80}
                 animateBy="words"
@@ -58,9 +58,9 @@ function Login() {
             </div>
             
             <p className="auth-description-text">
-              Protect your payments with cutting-edge AI technology. Our advanced fraud detection system 
-              analyzes transactions in real-time, identifying suspicious patterns and preventing fraudulent 
-              activities before they impact your business.
+              Secure your UPI transactions with cutting-edge AI technology. Our advanced fraud detection system 
+              specifically designed for UPI payments analyzes transactions in real-time, identifying suspicious 
+              patterns across PhonePe, Google Pay, Paytm, and all UPI apps before they impact your business.
             </p>
 
             <div className="features-list">
@@ -68,26 +68,26 @@ function Login() {
                 <div className="feature-icon">
                   <Zap size={20} />
                 </div>
-                <span>Real-time fraud detection and monitoring</span>
+                <span>Real-time UPI fraud detection and monitoring</span>
               </div>
               <div className="feature-item">
                 <div className="feature-icon">
                   <Eye size={20} />
                 </div>
-                <span>AI-powered risk analysis and scoring</span>
+                <span>AI-powered UPI risk analysis and scoring</span>
               </div>
               <div className="feature-item">
                 <div className="feature-icon">
                   <Sparkles size={20} />
                 </div>
-                <span>Intelligent recommendations and insights</span>
+                <span>Support for all major UPI apps in India</span>
               </div>
             </div>
 
             <div className="auth-stats">
               <div className="stat-item">
                 <div className="stat-value">99.9%</div>
-                <div className="stat-label">Accuracy</div>
+                <div className="stat-label">UPI Accuracy</div>
               </div>
               <div className="stat-item">
                 <div className="stat-value">&lt;100ms</div>
@@ -95,7 +95,7 @@ function Login() {
               </div>
               <div className="stat-item">
                 <div className="stat-value">24/7</div>
-                <div className="stat-label">Monitoring</div>
+                <div className="stat-label">UPI Monitoring</div>
               </div>
             </div>
           </div>
