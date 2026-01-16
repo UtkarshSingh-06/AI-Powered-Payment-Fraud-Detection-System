@@ -109,10 +109,10 @@ function About() {
             transition={{ duration: 0.6 }}
             className="hero-tagline"
           >
-            AI-POWERED FRAUD PROTECTION
+            AI-POWERED UPI FRAUD PROTECTION
           </motion.div>
           <BlurText
-            text="Protect Your Payments with Intelligence"
+            text="Secure Your UPI Transactions with Intelligence"
             className="hero-title"
             delay={100}
             animateBy="words"
@@ -125,9 +125,9 @@ function About() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="hero-description"
           >
-            Advanced AI-driven fraud detection system that analyzes transactions in real-time,
-            identifying suspicious patterns and preventing fraudulent activities before they impact your business.
-            Built for scale, designed for security.
+            Advanced AI-driven fraud detection system specifically designed for UPI payments.
+            Analyzes transactions in real-time, identifying suspicious patterns and preventing fraudulent 
+            activities before they impact your business. Built for India's fastest-growing payment method.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -175,15 +175,15 @@ function About() {
             className="section-header"
           >
             <BlurText
-              text="Scale, Flex, and Innovate"
+              text="India's Most Trusted UPI Security Platform"
               className="section-title"
               delay={80}
               animateBy="words"
               direction="top"
             />
             <p className="section-description">
-              Designed for universal usability, our platform minimizes operational overhead,
-              ensuring maximum ROI for brands of all sizes.
+              Designed specifically for UPI transactions, our platform ensures secure, instant payments
+              while minimizing fraud risks. Trusted by merchants and consumers across India.
             </p>
           </motion.div>
 
@@ -224,15 +224,15 @@ function About() {
             className="section-header"
           >
             <BlurText
-              text="Transform Payment Security"
+              text="Transform UPI Payment Security"
               className="section-title"
               delay={80}
               animateBy="words"
               direction="top"
             />
             <p className="section-description">
-              Manage and protect payment transactions within one unified platform.
-              Because when powered by AI, it's more than detection, it's prevention.
+              Manage and protect UPI transactions within one unified platform.
+              Real-time fraud detection for PhonePe, Google Pay, Paytm, and all UPI apps.
             </p>
           </motion.div>
 
@@ -240,39 +240,39 @@ function About() {
             {[
               {
                 icon: Brain,
-                title: 'AI-POWERED ANALYSIS',
-                description: 'Advanced machine learning algorithms analyze transaction patterns, user behavior, and historical data to identify fraud with unprecedented accuracy.',
-                color: 'blue'
+                title: 'AI-POWERED UPI ANALYSIS',
+                description: 'Advanced machine learning algorithms specifically trained on UPI transaction patterns. Analyzes user behavior, device fingerprints, and transaction history to identify fraud with 99.9% accuracy.',
+                color: 'green'
               },
               {
                 icon: Zap,
-                title: 'REAL-TIME DETECTION',
-                description: 'Monitor and analyze transactions as they happen. Get instant alerts and automatic blocking of suspicious activities before they cause damage.',
-                color: 'purple'
+                title: 'INSTANT UPI FRAUD DETECTION',
+                description: 'Monitor UPI transactions in real-time as they occur. Get instant alerts and automatic blocking of suspicious UPI payments before they complete. Response time: less than 100ms.',
+                color: 'green'
               },
               {
                 icon: Database,
-                title: 'DATA PIPELINES',
-                description: 'Collect and route your transaction data to all the tools you use. Seamless integration with payment processors, banks, and analytics platforms.',
-                color: 'pink'
+                title: 'UPI DATA INTEGRATION',
+                description: 'Seamless integration with all major UPI apps and banks. Collect and route UPI transaction data to NPCI, payment gateways, and your analytics platforms in real-time.',
+                color: 'green'
               },
               {
                 icon: BarChart3,
-                title: 'ANALYTICS & INSIGHTS',
-                description: 'View performance, compare metrics, and track fraud trends. Comprehensive dashboards with actionable insights for your security team.',
+                title: 'UPI ANALYTICS DASHBOARD',
+                description: 'View UPI transaction performance, compare metrics across different UPI apps (PhonePe, GPay, Paytm), and track fraud trends. Comprehensive dashboards for merchants and banks.',
                 color: 'green'
               },
               {
                 icon: Network,
-                title: 'MULTI-CHANNEL SUPPORT',
-                description: 'Protect transactions across all payment methods: credit cards, digital wallets, bank transfers, and cryptocurrency transactions.',
-                color: 'cyan'
+                title: 'ALL UPI APP SUPPORT',
+                description: 'Protect UPI transactions across all major apps: PhonePe, Google Pay, Paytm, BHIM, Amazon Pay, WhatsApp Pay, and 300+ other UPI-enabled apps.',
+                color: 'green'
               },
               {
                 icon: Code,
-                title: 'DEVELOPER-FRIENDLY API',
-                description: 'Code, integrate, and customize using our robust API. Built for developers, designed for seamless integration with your existing systems.',
-                color: 'orange'
+                title: 'UPI API INTEGRATION',
+                description: 'Integrate with our robust UPI fraud detection API. Built for developers working with UPI payments, designed for seamless integration with NPCI and payment gateways.',
+                color: 'green'
               }
             ].map((feature, index) => (
               <motion.div
@@ -304,7 +304,7 @@ function About() {
               className="how-it-works-text"
             >
               <BlurText
-                text="How FraudShield AI Works"
+                text="How FraudShield AI Protects UPI Payments"
                 className="section-title"
                 delay={80}
                 animateBy="words"
@@ -312,14 +312,14 @@ function About() {
               />
               <p className="section-description">
                 Our multi-layered fraud detection system uses advanced AI algorithms
-                to analyze every transaction across multiple risk factors in real-time.
+                specifically designed for UPI transactions. Analyzes every UPI payment across multiple risk factors in real-time.
               </p>
               <div className="process-steps">
                 {[
-                  { step: '01', title: 'Transaction Capture', desc: 'Real-time collection of transaction data from all payment channels' },
-                  { step: '02', title: 'AI Analysis', desc: 'Multi-factor risk scoring using machine learning models' },
-                  { step: '03', title: 'Pattern Detection', desc: 'Identification of anomalies and suspicious behaviors' },
-                  { step: '04', title: 'Decision & Action', desc: 'Automatic blocking or flagging based on risk score' }
+                  { step: '01', title: 'UPI Transaction Capture', desc: 'Real-time collection of UPI transaction data from NPCI and all UPI apps (PhonePe, GPay, Paytm, etc.)' },
+                  { step: '02', title: 'AI UPI Analysis', desc: 'Multi-factor risk scoring using ML models trained on Indian UPI transaction patterns' },
+                  { step: '03', title: 'UPI Pattern Detection', desc: 'Identification of suspicious UPI behaviors: unusual amounts, locations, velocity, device changes' },
+                  { step: '04', title: 'Instant UPI Blocking', desc: 'Automatic blocking or flagging of fraudulent UPI transactions before completion' }
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -344,13 +344,13 @@ function About() {
               className="how-it-works-visual"
             >
               <div className="visual-card glass-card">
-                <div className="visual-title">Spring Campaign '24</div>
+                <div className="visual-title">UPI Transaction Overview '24</div>
                 <div className="visual-stats">
                   {[
-                    { channel: 'Credit Cards', count: '234,206', percentage: 85 },
-                    { channel: 'Digital Wallets', count: '89,364', percentage: 65 },
-                    { channel: 'Bank Transfers', count: '156,140', percentage: 72 },
-                    { channel: 'Cryptocurrency', count: '45,198', percentage: 45 }
+                    { channel: 'PhonePe', count: '234,206', percentage: 85 },
+                    { channel: 'Google Pay', count: '189,364', percentage: 75 },
+                    { channel: 'Paytm', count: '156,140', percentage: 72 },
+                    { channel: 'Other UPI Apps', count: '98,542', percentage: 60 }
                   ].map((item, index) => (
                     <div key={index} className="visual-stat-item">
                       <div className="visual-stat-header">
@@ -400,7 +400,7 @@ function About() {
               { name: 'React 18', category: 'Frontend', icon: Code },
               { name: 'Node.js', category: 'Backend', icon: Server },
               { name: 'Machine Learning', category: 'AI Engine', icon: Brain },
-              { name: 'WebSocket', category: 'Real-time', icon: Network },
+              { name: 'NPCI Integration', category: 'UPI Gateway', icon: Network },
               { name: 'PostgreSQL', category: 'Database', icon: Database },
               { name: 'AWS Cloud', category: 'Infrastructure', icon: Globe }
             ].map((tech, index) => (
@@ -433,16 +433,16 @@ function About() {
               className="security-text"
             >
               <BlurText
-                text="Security You Can Trust"
+                text="UPI Security You Can Trust"
                 className="section-title"
                 delay={80}
                 animateBy="words"
                 direction="top"
               />
               <p className="section-description">
-                As a fraud detection company, we understand the importance of keeping
-                your company's data secure. We implement industry-leading security measures
-                to protect your sensitive information.
+                As India's leading UPI fraud detection platform, we understand the importance of keeping
+                your UPI transactions secure. We implement industry-leading security measures
+                compliant with RBI guidelines and NPCI standards to protect every UPI payment.
               </p>
             </motion.div>
             <motion.div
@@ -452,9 +452,9 @@ function About() {
               className="security-badges"
             >
               {[
-                { icon: Lock, title: 'GDPR Compliant', desc: 'Full compliance with EU data protection regulations' },
-                { icon: Shield, title: 'SOC 2 Type II', desc: 'Certified security and availability standards' },
-                { icon: FileCheck, title: 'ISO 27001', desc: 'Information security management certified' }
+                { icon: Lock, title: 'RBI Compliant', desc: 'Full compliance with Reserve Bank of India regulations for UPI transactions' },
+                { icon: Shield, title: 'NPCI Certified', desc: 'Certified partner with National Payments Corporation of India' },
+                { icon: FileCheck, title: 'ISO 27001', desc: 'Information security management certified for financial data' }
               ].map((badge, index) => (
                 <motion.div
                   key={index}
@@ -484,17 +484,17 @@ function About() {
             transition={{ duration: 0.6 }}
             className="cta-content"
           >
-            <BlurText
-              text="Ready to Protect Your Payments?"
-              className="cta-title"
-              delay={80}
-              animateBy="words"
-              direction="top"
-            />
-            <p className="cta-description">
-              Join thousands of businesses already using FraudShield AI to protect their transactions.
-              Start your free trial today.
-            </p>
+              <BlurText
+                text="Ready to Secure Your UPI Payments?"
+                className="cta-title"
+                delay={80}
+                animateBy="words"
+                direction="top"
+              />
+              <p className="cta-description">
+                Join thousands of merchants and businesses already using FraudShield AI to protect their UPI transactions.
+                Secure PhonePe, Google Pay, Paytm, and all UPI payments. Start your free trial today.
+              </p>
             <div className="cta-actions">
               <Link to="/register" className="btn-cta-primary">
                 Start Free Trial
