@@ -1,32 +1,33 @@
-# FraudShield AI - The AI based fraud payment detector
+# FraudShield AI - UPI Fraud Detection Platform
 
-A comprehensive full-stack web application for detecting and preventing payment fraud using AI-powered risk analysis, real-time monitoring, and intelligent recommendations.
+A comprehensive full-stack web application for detecting and preventing UPI payment fraud in India. Specifically designed for PhonePe, Google Pay, Paytm, BHIM, and all UPI-enabled apps. Uses AI-powered risk analysis, real-time monitoring, and intelligent recommendations.
 
 ## Features
 
-### 🔒 Automated Fraud Detection
-- AI-powered risk scoring for every transaction
+### 🔒 Automated UPI Fraud Detection
+- AI-powered risk scoring for every UPI transaction
 - Real-time fraud classification (Safe, Suspicious, Fraudulent)
-- Automatic blocking of high-risk transactions
-- Multi-factor risk analysis (amount, location, velocity, device, etc.)
+- Automatic blocking of high-risk UPI payments
+- Multi-factor risk analysis optimized for UPI (amount, location, velocity, device, UPI app, etc.)
+- Support for all major UPI apps: PhonePe, Google Pay, Paytm, BHIM, Amazon Pay, WhatsApp Pay, and 300+ others
 
-### 📊 Real-Time Payment Monitoring
-- Live transaction updates via WebSocket
-- Instant fraud alerts
-- Real-time dashboard updates
+### 📊 Real-Time UPI Payment Monitoring
+- Live UPI transaction updates via WebSocket
+- Instant fraud alerts for suspicious UPI payments
+- Real-time dashboard updates for all UPI apps
 
-### 📈 Payment Analytics Dashboard
-- Comprehensive fraud statistics
-- Time-series fraud rate analysis
-- High-risk region identification
-- Payment method distribution
-- Interactive charts and visualizations
+### 📈 UPI Analytics Dashboard
+- Comprehensive UPI fraud statistics
+- Time-series UPI fraud rate analysis
+- High-risk region identification for UPI transactions
+- UPI app distribution (PhonePe, GPay, Paytm, etc.)
+- Interactive charts and visualizations for UPI data
 
-### 💡 Personalized Payment Recommendations
-- AI-generated security recommendations
-- Payment method suggestions
-- Timing optimization advice
-- Risk behavior warnings
+### 💡 Personalized UPI Security Recommendations
+- AI-generated UPI security recommendations
+- UPI transaction timing optimization advice
+- Risk behavior warnings specific to UPI usage patterns
+- Best practices for secure UPI payments
 
 ### 👥 User & Admin Roles
 - **Users**: View transactions, receive recommendations, see fraud warnings
