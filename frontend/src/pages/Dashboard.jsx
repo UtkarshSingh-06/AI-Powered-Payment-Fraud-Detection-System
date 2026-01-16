@@ -84,7 +84,7 @@ function Dashboard() {
             ]}
           />
           <p className="dashboard-subtitle">
-            Welcome back, <span className="highlight-name">{user?.name}</span>! Here's your payment fraud overview.
+            Welcome back, <span className="highlight-name">{user?.name}</span>! Here's your UPI fraud overview.
           </p>
         </div>
       </div>
@@ -97,7 +97,7 @@ function Dashboard() {
             <DollarSign size={28} />
           </div>
           <div className="stat-content">
-            <p className="stat-label">Total Transactions</p>
+            <p className="stat-label">Total UPI Transactions</p>
             <p className="stat-value">{summary.total || 0}</p>
             <div className="stat-trend">
               <Activity size={14} />
@@ -157,7 +157,7 @@ function Dashboard() {
             <TrendingUp size={28} />
           </div>
           <div className="stat-content">
-            <p className="stat-label">Fraud Rate</p>
+            <p className="stat-label">UPI Fraud Rate</p>
             <p className="stat-value">{summary.fraudRate || 0}%</p>
             <div className="stat-trend">
               <TrendingUp size={14} />
@@ -189,7 +189,7 @@ function Dashboard() {
               {recentTransactions.length === 0 ? (
                 <tr>
                   <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                    No transactions found
+                    No UPI transactions found
                   </td>
                 </tr>
               ) : (
