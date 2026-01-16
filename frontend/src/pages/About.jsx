@@ -83,10 +83,10 @@ function About() {
       {/* Navigation Bar */}
       <nav className="about-nav">
         <div className="nav-container">
-          <div className="nav-logo">
+          <Link to="/" className="nav-logo" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Shield size={24} />
             <span>FraudShield AI</span>
-          </div>
+          </Link>
           <div className="nav-links">
             <a href="#features">Features</a>
             <a href="#how-it-works">How It Works</a>
