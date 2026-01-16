@@ -18,7 +18,7 @@ function Layout() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const isActive = (path) => location.pathname === path;
@@ -27,8 +27,10 @@ function Layout() {
     <div className="layout">
       <nav className="sidebar">
         <div className="sidebar-header">
-          <h2>FraudShield AI</h2>
-          <p className="sidebar-tagline">The AI based fraud payment detector</p>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h2>FraudShield AI</h2>
+            <p className="sidebar-tagline">The AI based fraud payment detector</p>
+          </Link>
           <p className="user-name">{user?.name}</p>
           <p className="user-role">{user?.role === 'admin' ? 'Administrator' : 'User'}</p>
         </div>
@@ -36,8 +38,8 @@ function Layout() {
         <ul className="nav-menu">
           <li>
             <Link 
-              to="/dashboard" 
-              className={isActive('/dashboard') ? 'active' : ''}
+              to="/app/dashboard" 
+              className={isActive('/app/dashboard') ? 'active' : ''}
             >
               <LayoutDashboard size={20} />
               Dashboard
@@ -45,8 +47,8 @@ function Layout() {
           </li>
           <li>
             <Link 
-              to="/transactions" 
-              className={isActive('/transactions') ? 'active' : ''}
+              to="/app/transactions" 
+              className={isActive('/app/transactions') ? 'active' : ''}
             >
               <CreditCard size={20} />
               Transactions
@@ -54,8 +56,8 @@ function Layout() {
           </li>
           <li>
             <Link 
-              to="/analytics" 
-              className={isActive('/analytics') ? 'active' : ''}
+              to="/app/analytics" 
+              className={isActive('/app/analytics') ? 'active' : ''}
             >
               <BarChart3 size={20} />
               Analytics
@@ -63,8 +65,8 @@ function Layout() {
           </li>
           <li>
             <Link 
-              to="/recommendations" 
-              className={isActive('/recommendations') ? 'active' : ''}
+              to="/app/recommendations" 
+              className={isActive('/app/recommendations') ? 'active' : ''}
             >
               <Lightbulb size={20} />
               Recommendations
@@ -73,8 +75,8 @@ function Layout() {
           {user?.role === 'admin' && (
             <li>
               <Link 
-                to="/admin" 
-                className={isActive('/admin') ? 'active' : ''}
+                to="/app/admin" 
+                className={isActive('/app/admin') ? 'active' : ''}
               >
                 <Shield size={20} />
                 Admin Panel
