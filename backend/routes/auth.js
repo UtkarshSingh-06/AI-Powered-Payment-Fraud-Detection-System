@@ -5,8 +5,11 @@ import { readData, writeData } from '../config/database.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'fraud-detection-secret-key-change-in-production';
-const JWT_EXPIRES_IN = '7d';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required. Please set it in your .env file.');
+}
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 /**
  * Register a new user
