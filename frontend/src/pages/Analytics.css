@@ -1,20 +1,74 @@
-.analytics-page {
-  max-width: 1400px;
-  margin: 0 auto;
+.analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.analytics-stat-card {
+  padding: 24px;
+}
+
+.analytics-stat-card .stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.analytics-stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .date-filters {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-filters .form-input {
+  min-width: 140px;
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
 }
 
-.charts-grid .card {
+.chart-card {
   margin-bottom: 0;
+}
+
+.chart-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.analytics-table-card {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-filters {
+    width: 100%;
+  }
+
+  .date-filters .form-input {
+    flex: 1;
+    min-width: 0;
+  }
 }
