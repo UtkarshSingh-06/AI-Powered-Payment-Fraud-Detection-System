@@ -66,24 +66,33 @@ function Transactions() {
   };
 
   if (loading) {
-    return <div className="loading">Loading transactions...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading transactions...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="transactions-page">
+    <div className="page-wrapper">
+      <div className="page-background">
+        <div className="gradient-orb orb-1" />
+        <div className="gradient-orb orb-2" />
+        <div className="gradient-orb orb-3" />
+      </div>
       <div className="page-header">
         <div>
           <h1>Transactions</h1>
           <p>View and manage your payment transactions</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+        <button type="button" className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           <Plus size={20} />
           New Transaction
         </button>
       </div>
 
       {showForm && (
-        <div className="card">
+        <div className="card transactions-form-card">
           <h2 className="card-title">Create New Transaction</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-row">
@@ -184,13 +193,12 @@ function Transactions() {
         </div>
       )}
 
-      <div className="card">
+      <div className="card transactions-list-card">
         <div className="card-header">
           <h2 className="card-title">All Transactions</h2>
           <div className="filters">
             <select
-              className="form-input"
-              style={{ width: '200px' }}
+              className="form-input filter-select"
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
             >
