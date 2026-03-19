@@ -159,6 +159,20 @@ npm run dev
 
 The frontend will run on `http://localhost:3000`
 
+## Demo credentials
+
+After running `npm run seed` in the backend, you can log in with these accounts:
+
+| Role   | Email                     | Password    |
+|--------|---------------------------|-------------|
+| **Admin** | `admin@frauddetection.com` | `admin123`  |
+| User   | `john.doe@example.com`    | `password123` |
+| User   | `jane.smith@example.com`  | `password123` |
+| User   | `bob.wilson@example.com`  | `password123` |
+
+- **Admin**: full access including Admin Panel (fraud cases, approve/block, users, logs).
+- **Users**: dashboard, transactions, analytics, and recommendations (own data only).
+
 ## Usage Guide
 
 ### For Users
