@@ -55,7 +55,11 @@ function Dashboard() {
   };
 
   if (loading) {
-    return <div className="loading">Loading dashboard...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading dashboard...</span>
+      </div>
+    );
   }
 
   const summary = dashboardData?.summary || {};
