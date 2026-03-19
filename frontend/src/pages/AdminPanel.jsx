@@ -55,11 +55,20 @@ function AdminPanel() {
   };
 
   if (loading) {
-    return <div className="loading">Loading fraud cases...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading fraud cases...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="admin-panel">
+    <div className="page-wrapper">
+      <div className="page-background">
+        <div className="gradient-orb orb-1" />
+        <div className="gradient-orb orb-2" />
+        <div className="gradient-orb orb-3" />
+      </div>
       <div className="page-header">
         <div>
           <h1>Admin Panel</h1>
@@ -67,7 +76,7 @@ function AdminPanel() {
         </div>
       </div>
 
-      <div className="card">
+      <div className="card admin-card">
         <h2 className="card-title">Fraud Cases</h2>
         <div className="table-container">
           <table className="data-table">
@@ -153,8 +162,10 @@ function AdminPanel() {
             <div className="modal-header">
               <h2>Transaction Details</h2>
               <button
-                className="btn-icon"
+                type="button"
+                className="modal-close"
                 onClick={() => setSelectedTransaction(null)}
+                aria-label="Close"
               >
                 ×
               </button>
