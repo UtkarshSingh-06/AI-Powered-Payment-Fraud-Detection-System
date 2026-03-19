@@ -185,6 +185,22 @@ function Login() {
               <Sparkles size={18} />
               <span>Create New Account</span>
             </Link>
+
+            <div className="demo-credentials">
+              <p className="demo-credentials-title">Demo login (after running backend seed)</p>
+              <div className="demo-credentials-grid">
+                <div className="demo-cred-block">
+                  <span className="demo-cred-role">Admin</span>
+                  <code>admin@frauddetection.com</code>
+                  <code>admin123</code>
+                </div>
+                <div className="demo-cred-block">
+                  <span className="demo-cred-role">User</span>
+                  <code>john.doe@example.com</code>
+                  <code>password123</code>
+                </div>
+              </div>
+            </div>
             
             <div style={{ marginTop: '24px', textAlign: 'center' }}>
               <Link to="/about" style={{ color: 'rgba(229, 231, 235, 0.6)', fontSize: '0.85rem', textDecoration: 'none' }}>
