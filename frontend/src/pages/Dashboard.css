@@ -100,10 +100,10 @@
 }
 
 .dashboard-subtitle {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 400;
-  letter-spacing: 0.3px;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .highlight-name {
@@ -248,31 +248,29 @@
 }
 
 .stat-label {
-  font-size: 14px;
-  color: rgba(229, 231, 235, 0.6);
+  font-size: 0.8rem;
+  color: var(--text-muted);
   margin-bottom: 8px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
 }
 
 .stat-value {
   font-size: 36px;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   margin-bottom: 12px;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .stat-trend {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  color: rgba(229, 231, 235, 0.5);
+  font-size: 0.75rem;
+  color: var(--text-muted);
   margin-top: 8px;
 }
 
@@ -298,13 +296,10 @@
   position: relative;
 }
 
-.card-title {
-  font-size: 24px;
+.transactions-card .card-title {
+  font-size: 1.35rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -318,101 +313,12 @@
   left: 0;
 }
 
-/* Table Styles */
-.table-container {
-  overflow-x: auto;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table thead {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
-}
-
-.data-table th {
-  padding: 16px 20px;
-  text-align: left;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid rgba(34, 197, 94, 0.2);
-}
-
-.data-table td {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: rgba(229, 231, 235, 0.8);
-  font-size: 14px;
-}
-
-.data-table tbody tr {
-  transition: all 0.2s ease;
-}
-
-.data-table tbody tr:hover {
-  background: rgba(0, 212, 255, 0.05);
-  transform: translateX(4px);
-}
-
-.transaction-id {
-  background: rgba(34, 197, 94, 0.1);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  color: #22c55e;
-  border: 1px solid rgba(0, 212, 255, 0.2);
-  display: inline-block;
-}
-
-/* Badge Styles */
-.badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-}
-
-.badge-safe {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.badge-suspicious {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.badge-fraudulent {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
+/* Table and badges use App.css (high-contrast); no overrides here */
 
 /* Loading State */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
-  position: relative;
-  z-index: 1;
+.dashboard .loading {
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 /* Responsive Design */
