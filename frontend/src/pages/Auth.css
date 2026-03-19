@@ -453,6 +453,61 @@
   }
 }
 
+/* Demo credentials */
+.demo-credentials {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 12px;
+}
+
+.demo-credentials-title {
+  font-size: 0.8rem;
+  color: rgba(229, 231, 235, 0.7);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.demo-credentials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.demo-cred-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.demo-cred-role {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #22c55e;
+  margin-bottom: 2px;
+}
+
+.demo-cred-block code {
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  padding: 0;
+}
+
+@media (max-width: 480px) {
+  .demo-credentials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Divider */
 .auth-divider {
   display: flex;
