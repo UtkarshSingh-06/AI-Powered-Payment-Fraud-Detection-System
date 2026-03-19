@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import BlurText from '../components/BlurText';
+import StatCard from '../components/StatCard';
 import {
   Shield,
   Zap,
@@ -24,7 +25,9 @@ import {
   Server,
   Cpu,
   Network,
-  FileCheck
+  FileCheck,
+  Menu,
+  X
 } from 'lucide-react';
 import './About.css';
 
@@ -40,6 +43,7 @@ function About() {
   const [howItWorksInView, setHowItWorksInView] = useState(false);
   const [techInView, setTechInView] = useState(false);
   const [securityInView, setSecurityInView] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const observers = [];
@@ -87,15 +91,24 @@ function About() {
             <Shield size={24} />
             <span>FraudShield AI</span>
           </Link>
-          <div className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#technology">Technology</a>
-            <a href="#security">Security</a>
+          <button
+            type="button"
+            className="about-nav-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          <div className={`nav-links ${mobileMenuOpen ? 'nav-links-open' : ''}`}>
+            <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
+            <a href="#technology" onClick={() => setMobileMenuOpen(false)}>Technology</a>
+            <a href="#security" onClick={() => setMobileMenuOpen(false)}>Security</a>
           </div>
-          <div className="nav-actions">
-            <Link to="/login" className="nav-link-btn">Sign In</Link>
-            <Link to="/register" className="nav-btn-primary">Get Started</Link>
+          <div className={`nav-actions ${mobileMenuOpen ? 'nav-actions-open' : ''}`}>
+            <Link to="/login" className="nav-link-btn" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
+            <Link to="/register" className="nav-btn-primary" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
           </div>
         </div>
       </nav>
@@ -196,19 +209,13 @@ function About() {
               { value: '500K+', label: 'Transactions Daily', icon: Activity },
               { value: '98%', label: 'Customer Satisfaction', icon: Users }
             ].map((stat, index) => (
-              <motion.div
+              <StatCard
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="stat-card-glass"
-              >
-                <div className="stat-icon-wrapper">
-                  <stat.icon size={32} />
-                </div>
-                <div className="stat-value">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
-              </motion.div>
+                stat={stat}
+                index={index}
+                inView={statsInView}
+                icon={stat.icon}
+              />
             ))}
           </div>
         </div>
