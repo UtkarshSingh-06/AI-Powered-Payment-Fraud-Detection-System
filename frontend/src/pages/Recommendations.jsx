@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import api from '../services/api';
 import { Lightbulb, AlertCircle, Info, CheckCircle } from 'lucide-react';
 import './Recommendations.css';
@@ -34,15 +35,24 @@ function Recommendations() {
   };
 
   const getPriorityClass = (priority) => {
-    return `recommendation-card priority-${priority}`;
+    return `priority-${priority}`;
   };
 
   if (loading) {
-    return <div className="loading">Loading recommendations...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading recommendations...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="recommendations-page">
+    <div className="page-wrapper">
+      <div className="page-background">
+        <div className="gradient-orb orb-1" />
+        <div className="gradient-orb orb-2" />
+        <div className="gradient-orb orb-3" />
+      </div>
       <div className="page-header">
         <div>
           <h1>Payment Recommendations</h1>
@@ -51,7 +61,7 @@ function Recommendations() {
       </div>
 
       {recommendations.length === 0 ? (
-        <div className="card">
+        <div className="card empty-card">
           <div className="empty-state">
             <Lightbulb size={48} className="empty-icon" />
             <h3>No recommendations available</h3>
@@ -61,7 +71,14 @@ function Recommendations() {
       ) : (
         <div className="recommendations-grid">
           {recommendations.map((rec, index) => (
-            <div key={index} className={getPriorityClass(rec.priority)}>
+            <motion.div
+              key={index}
+              className={`recommendation-card ${getPriorityClass(rec.priority || 'low')}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.06 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            >
               <div className="recommendation-header">
                 <div className="recommendation-icon">
                   {getPriorityIcon(rec.priority)}
@@ -81,7 +98,7 @@ function Recommendations() {
                 <strong>Action:</strong>
                 <p>{rec.action}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
