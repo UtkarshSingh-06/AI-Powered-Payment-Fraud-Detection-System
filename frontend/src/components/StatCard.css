@@ -1,0 +1,191 @@
+/* Stat card with pattern and glow */
+.stat-card-glass {
+  position: relative;
+  background: rgba(13, 26, 13, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(34, 197, 94, 0.22);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  overflow: hidden;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card-glass:hover {
+  border-color: rgba(34, 197, 94, 0.45);
+  box-shadow: 0 12px 40px rgba(34, 197, 94, 0.18), 0 0 0 1px rgba(34, 197, 94, 0.1);
+}
+
+/* Subtle grid/dot pattern */
+.stat-card-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(34, 197, 94, 0.08) 1px, transparent 0);
+  background-size: 20px 20px;
+  background-position: 0 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.stat-card-glow {
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.12) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.stat-card-glass:hover .stat-card-glow {
+  opacity: 1;
+}
+
+.stat-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat-icon-wrapper {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.35) 0%, rgba(22, 163, 74, 0.25) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22c55e;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card-glass:hover .stat-icon-wrapper {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.3);
+}
+
+.stat-icon-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.25) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card-glass:hover .stat-icon-glow {
+  opacity: 1;
+}
+
+/* Value with ring (percentage) */
+.stat-value-with-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 4px 0;
+}
+
+.stat-value-overlay {
+  position: absolute;
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+}
+
+/* Progress ring */
+.stat-progress-ring {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-ring-svg {
+  display: block;
+}
+
+.stat-ring-bg {
+  stroke: rgba(34, 197, 94, 0.15);
+}
+
+.stat-ring-fill {
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.4));
+}
+
+/* Mini sparkline */
+.stat-mini-chart {
+  margin: 4px 0;
+  opacity: 0.95;
+}
+
+.stat-mini-chart svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Speed lines */
+.stat-speed-lines {
+  margin: 4px 0;
+  opacity: 0.9;
+}
+
+.stat-speed-lines svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Default value and label */
+.stat-card-content .stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.stat-card-content .stat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  max-width: 140px;
+}
+
+@media (max-width: 640px) {
+  .stat-card-glass {
+    padding: 24px 20px;
+  }
+
+  .stat-value-with-ring {
+    width: 72px;
+    height: 72px;
+  }
+
+  .stat-value-overlay {
+    font-size: 1.2rem !important;
+  }
+
+  .stat-card-content .stat-value {
+    font-size: 1.75rem;
+  }
+}
