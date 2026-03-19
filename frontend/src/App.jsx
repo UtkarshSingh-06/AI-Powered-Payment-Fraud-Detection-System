@@ -16,7 +16,11 @@ function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading...</span>
+      </div>
+    );
   }
   
   return user ? children : <Navigate to="/login" />;
@@ -26,7 +30,11 @@ function AdminRoute({ children }) {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="loading">
+        <span className="loading-text">Loading...</span>
+      </div>
+    );
   }
   
   if (!user) {
