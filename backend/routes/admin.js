@@ -1,6 +1,9 @@
 import express from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import { readData, writeData, appendData } from '../config/database.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
+import { publishEvent } from '../config/rabbitmq.js';
+import { writeAuditLog } from '../services/auditLog.js';
 
 const router = express.Router();
 
@@ -190,6 +193,112 @@ router.get('/users', async (req, res, next) => {
       users: usersWithoutPasswords,
       count: usersWithoutPasswords.length
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Label transaction outcome for feedback/retraining loop
+ * POST /api/admin/transactions/:id/label
+ */
+router.post('/transactions/:id/label', async (req, res, next) => {
+  try {
+    const { label, notes } = req.body;
+    if (!['fraud', 'legit', 'needs_review'].includes(label)) {
+      return res.status(400).json({ message: 'Invalid label value' });
+    }
+
+    const transactions = await readData('transactions.json');
+    const tx = transactions.find((item) => item.transactionId === req.params.id);
+    if (!tx) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    const labelRecord = {
+      labelId: uuidv4(),
+      transactionId: tx.transactionId,
+      userId: tx.userId,
+      label,
+      notes: notes || null,
+      labeledBy: req.user.userId,
+      timestamp: new Date().toISOString()
+    };
+    await appendData('labels.json', labelRecord);
+    await writeAuditLog('transaction_labeled', req.user.userId, labelRecord);
+    await publishEvent('fraud.label.updated', {
+      eventId: uuidv4(),
+      eventType: 'fraud.label.updated',
+      timestamp: new Date().toISOString(),
+      label: labelRecord
+    });
+
+    res.status(201).json(labelRecord);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/labels', async (_req, res, next) => {
+  try {
+    const labels = await readData('labels.json');
+    res.json({ labels, count: labels.length });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/model-versions', async (_req, res, next) => {
+  try {
+    const models = await readData('modelVersions.json');
+    res.json({ models, count: models.length });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/model-versions', async (req, res, next) => {
+  try {
+    const { modelVersion, metrics = {}, status = 'candidate' } = req.body;
+    if (!modelVersion) {
+      return res.status(400).json({ message: 'modelVersion is required' });
+    }
+    const record = {
+      modelVersionId: uuidv4(),
+      modelVersion,
+      metrics,
+      status,
+      createdBy: req.user.userId,
+      createdAt: new Date().toISOString()
+    };
+    await appendData('modelVersions.json', record);
+    await writeAuditLog('model_version_created', req.user.userId, record);
+    res.status(201).json(record);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/model-versions/:id/promote', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const versions = await readData('modelVersions.json');
+    const index = versions.findIndex((item) => item.modelVersionId === id);
+    if (index === -1) {
+      return res.status(404).json({ message: 'Model version not found' });
+    }
+
+    versions.forEach((item) => {
+      if (item.status === 'production') {
+        item.status = 'archived';
+      }
+    });
+    versions[index].status = 'production';
+    versions[index].promotedBy = req.user.userId;
+    versions[index].promotedAt = new Date().toISOString();
+    await writeData('modelVersions.json', versions);
+    await writeAuditLog('model_version_promoted', req.user.userId, versions[index]);
+    res.json(versions[index]);
   } catch (error) {
     next(error);
   }
