@@ -106,6 +106,26 @@ Fraud-Payment-detection/
 
 ## Installation & Setup
 
+## Quick Start (Recommended for demo)
+
+```bash
+# Terminal 1
+cd backend
+npm install
+npm run seed
+npm start
+
+# Terminal 2
+cd frontend
+npm install
+npm run dev
+```
+
+Open:
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000`
+- Health: `http://localhost:5000/api/health`
+
 ### Prerequisites
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
@@ -201,7 +221,7 @@ After running `npm run seed` in the backend, you can log in with these accounts:
 - `GET /api/auth/me` - Get current user profile
 
 ### Transactions
-- `GET /api/transactions` - Get all transactions (filtered by user)
+- `GET /api/transactions` - Get all transactions (filtered by user, status, classification, date)
 - `GET /api/transactions/:id` - Get specific transaction
 - `POST /api/transactions` - Create new transaction
 - `PATCH /api/transactions/:id/status` - Update transaction status (admin)
@@ -246,6 +266,7 @@ Each factor contributes to a risk score (0-100), which determines the classifica
 ```bash
 cd backend
 npm run dev  # Runs with auto-reload (requires Node.js --watch flag)
+npm test     # Run backend tests
 ```
 
 ### Frontend Development
@@ -317,6 +338,7 @@ NODE_ENV=development
 - Ensure backend is running on port 5000
 - Check CORS settings in backend
 - Verify API proxy settings in `vite.config.js`
+- Confirm `VITE_API_URL` in `frontend/.env` is correct
 
 ### Seed script errors
 - Ensure you're in the backend directory
@@ -339,6 +361,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Support
 
 For issues, questions, or contributions, please open an issue on the repository.
+
+## Minor Project Submission Checklist
+
+- Working login/register flow with role-based access.
+- Transaction creation + status/classification filtering.
+- Live monitoring page with real-time updates.
+- Admin actions (approve/block/label) + audit visibility.
+- Backend tests passing (`cd backend && npm test`).
+- Screenshots + 2-3 minute demo video.
+- Report/PPT describing architecture, algorithm, and results.
 
 ---
 
