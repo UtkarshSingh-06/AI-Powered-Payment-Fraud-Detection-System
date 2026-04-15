@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fraudshield.ai/schemas/scoring-request.schema.json",
+  "title": "ScoringRequest",
+  "type": "object",
+  "required": ["transactionId", "userId", "amount", "merchantCategory", "timestamp", "deviceId"],
+  "properties": {
+    "transactionId": { "type": "string", "minLength": 1 },
+    "userId": { "type": "string", "minLength": 1 },
+    "amount": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "default": "INR" },
+    "merchantName": { "type": "string" },
+    "merchantCategory": { "type": "string" },
+    "paymentMethod": { "type": "string" },
+    "location": { "type": "string" },
+    "country": { "type": "string" },
+    "deviceId": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "featureVector": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    }
+  },
+  "additionalProperties": false
+}
