@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraudshield-inference
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fraudshield-inference
+  template:
+    metadata:
+      labels:
+        app: fraudshield-inference
+    spec:
+      containers:
+        - name: inference
+          image: fraudshield/inference:latest
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fraudshield-inference
+spec:
+  selector:
+    app: fraudshield-inference
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
