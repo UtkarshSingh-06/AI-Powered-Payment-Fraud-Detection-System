@@ -8,6 +8,7 @@ import {
   BarChart3, 
   Lightbulb, 
   Shield, 
+  Radio,
   LogOut,
   Menu,
   X
@@ -39,6 +40,7 @@ function Layout() {
 
   const navItems = [
     { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/app/live-monitoring', icon: Radio, label: 'Live Monitoring' },
     { to: '/app/transactions', icon: CreditCard, label: 'Transactions' },
     { to: '/app/analytics', icon: BarChart3, label: 'Analytics' },
     { to: '/app/recommendations', icon: Lightbulb, label: 'Recommendations' },
