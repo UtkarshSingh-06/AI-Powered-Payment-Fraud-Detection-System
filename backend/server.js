@@ -1,32 +1,51 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import client from 'prom-client';
 import { createServer } from 'http';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import authRoutes from './routes/auth.js';
-import transactionRoutes from './routes/transactions.js';
-import analyticsRoutes from './routes/analytics.js';
-import recommendationRoutes from './routes/recommendations.js';
-import adminRoutes from './routes/admin.js';
 import { setupWebSocket } from './services/websocket.js';
 import { initializeDatabase } from './config/database.js';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 const app = express();
 const PORT = process.env.PORT || 5000;
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
 // Middleware
-app.use(cors());
+app.use(helmet());
+app.use(compression());
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  rateLimit({
+    windowMs: 60 * 1000,
+    max: Number(process.env.RATE_LIMIT_PER_MINUTE || 120)
+  })
+);
 
-// Initialize database
-initializeDatabase();
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
+
+app.get('/api/metrics', async (_req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+await initializeDatabase();
+
+const [{ default: authRoutes }, { default: transactionRoutes }, { default: analyticsRoutes }, { default: recommendationRoutes }, { default: adminRoutes }] =
+  await Promise.all([
+    import('./routes/auth.js'),
+    import('./routes/transactions.js'),
+    import('./routes/analytics.js'),
+    import('./routes/recommendations.js'),
+    import('./routes/admin.js')
+  ]);
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -55,10 +74,12 @@ const server = createServer(app);
 // Setup WebSocket for real-time updates
 setupWebSocket(server, app);
 
-// Start server
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 API Health: http://localhost:${PORT}/api/health`);
-});
+// Start server (skip auto-listen during tests)
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`API Health: http://localhost:${PORT}/api/health`);
+  });
+}
 
 export default app;
