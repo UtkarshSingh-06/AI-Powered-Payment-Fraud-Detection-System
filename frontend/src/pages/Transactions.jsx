@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Plus, Filter } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import './Transactions.css';
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [filters, setFilters] = useState({ status: '', limit: 50 });
+  const [filters, setFilters] = useState({ status: '', classification: '', limit: 50 });
   const [formData, setFormData] = useState({
     amount: '',
     merchantName: '',
@@ -24,14 +25,17 @@ function Transactions() {
   const loadTransactions = async () => {
     try {
       setLoading(true);
+      setError('');
       const params = new URLSearchParams();
       if (filters.status) params.append('status', filters.status);
+      if (filters.classification) params.append('classification', filters.classification);
       if (filters.limit) params.append('limit', filters.limit);
       
       const response = await api.get(`/transactions?${params.toString()}`);
       setTransactions(response.data.transactions || []);
     } catch (error) {
       console.error('Error loading transactions:', error);
+      setError(error.response?.data?.message || 'Failed to load transactions');
     } finally {
       setLoading(false);
     }
@@ -53,8 +57,37 @@ function Transactions() {
       loadTransactions();
     } catch (error) {
       console.error('Error creating transaction:', error);
-      alert(error.response?.data?.message || 'Failed to create transaction');
+      setError(error.response?.data?.message || 'Failed to create transaction');
     }
+  };
+
+  const resetFilters = () => {
+    setFilters({ status: '', classification: '', limit: 50 });
+  };
+
+  const exportCsv = () => {
+    const header = ['Transaction ID', 'Merchant', 'Category', 'Amount', 'Payment Method', 'Status', 'Risk Score', 'Classification', 'Date'];
+    const rows = transactions.map((transaction) => [
+      transaction.transactionId,
+      transaction.merchantName,
+      transaction.merchantCategory,
+      transaction.amount,
+      transaction.paymentMethod,
+      transaction.status,
+      transaction.fraudStatus?.score ?? '',
+      transaction.fraudStatus?.classification ?? '',
+      new Date(transaction.timestamp).toISOString()
+    ]);
+    const csv = [header, ...rows]
+      .map((line) => line.map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `transactions-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const getStatusBadgeClass = (status) => {
@@ -90,6 +123,8 @@ function Transactions() {
           New Transaction
         </button>
       </div>
+
+      {error && <div className="alert alert-error">{error}</div>}
 
       {showForm && (
         <div className="card transactions-form-card">
@@ -208,6 +243,23 @@ function Transactions() {
               <option value="blocked">Blocked</option>
               <option value="pending">Pending</option>
             </select>
+            <select
+              className="form-input filter-select"
+              value={filters.classification}
+              onChange={(e) => setFilters({ ...filters, classification: e.target.value })}
+            >
+              <option value="">All Classifications</option>
+              <option value="safe">Safe</option>
+              <option value="suspicious">Suspicious</option>
+              <option value="fraudulent">Fraudulent</option>
+            </select>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={resetFilters}>
+              Reset
+            </button>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={exportCsv} disabled={!transactions.length}>
+              Export CSV
+            </button>
+            <span className="results-chip">{transactions.length} results</span>
           </div>
         </div>
         <div className="table-container">
