@@ -35,6 +35,23 @@
   min-width: 160px;
 }
 
+.btn-sm {
+  padding: 10px 14px;
+  font-size: 0.82rem;
+}
+
+.results-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
