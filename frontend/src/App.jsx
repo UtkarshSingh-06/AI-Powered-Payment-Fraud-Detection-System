@@ -8,6 +8,7 @@ import Transactions from './pages/Transactions';
 import Analytics from './pages/Analytics';
 import Recommendations from './pages/Recommendations';
 import AdminPanel from './pages/AdminPanel';
+import LiveMonitoring from './pages/LiveMonitoring';
 import Layout from './components/Layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
@@ -74,6 +75,7 @@ function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="transactions" element={<Transactions />} />
         <Route path="analytics" element={<Analytics />} />
+        <Route path="live-monitoring" element={<LiveMonitoring />} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route
           path="admin"
@@ -88,6 +90,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
       <Route path="/transactions" element={<Navigate to="/app/transactions" />} />
       <Route path="/analytics" element={<Navigate to="/app/analytics" />} />
+      <Route path="/live-monitoring" element={<Navigate to="/app/live-monitoring" />} />
       <Route path="/recommendations" element={<Navigate to="/app/recommendations" />} />
       <Route path="/admin" element={<Navigate to="/app/admin" />} />
     </Routes>
