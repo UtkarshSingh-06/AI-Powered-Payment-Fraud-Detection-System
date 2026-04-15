@@ -1,6 +1,47 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fraudshield-postgres
+    environment:
+      - POSTGRES_DB=fraudshield
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fraudshield-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: fraudshield-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - fraudshield-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: fraudshield-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - fraudshield-network
+
+  inference:
+    build:
+      context: ./services/inference-fastapi
+      dockerfile: Dockerfile
+    container_name: fraudshield-inference
+    ports:
+      - "8000:8000"
+    networks:
+      - fraudshield-network
+
   backend:
     build:
       context: ./backend
@@ -14,10 +55,17 @@ services:
       - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - JWT_EXPIRES_IN=7d
       - CORS_ORIGIN=http://localhost:3000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fraudshield
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - INFERENCE_URL=http://inference:8000
     env_file:
       - ./backend/.env
-    volumes:
-      - ./backend/data:/app/data
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - inference
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/api/health"]
@@ -50,6 +98,25 @@ services:
     networks:
       - fraudshield-network
 
+  feature-pipeline:
+    image: python:3.11-slim
+    container_name: fraudshield-feature-pipeline
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir pika redis && python worker.py"
+    volumes:
+      - ./services/feature-pipeline:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - fraudshield-network
+
 networks:
   fraudshield-network:
     driver: bridge
+
+volumes:
+  postgres_data:
