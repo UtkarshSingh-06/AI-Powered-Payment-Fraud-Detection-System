@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fraudshield.ai/schemas/scoring-response.schema.json",
+  "title": "ScoringResponse",
+  "type": "object",
+  "required": ["transactionId", "riskScore", "classification", "decision", "models", "explanations"],
+  "properties": {
+    "transactionId": { "type": "string" },
+    "riskScore": { "type": "number", "minimum": 0, "maximum": 100 },
+    "classification": { "type": "string", "enum": ["Safe", "Suspicious", "Fraudulent"] },
+    "decision": { "type": "string", "enum": ["allow", "challenge_otp", "block"] },
+    "latencyMs": { "type": "number", "minimum": 0 },
+    "modelVersion": { "type": "string" },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "score"],
+        "properties": {
+          "name": { "type": "string" },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "weight": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "explanations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["feature", "impact", "direction"],
+        "properties": {
+          "feature": { "type": "string" },
+          "impact": { "type": "number" },
+          "direction": { "type": "string", "enum": ["positive", "negative"] }
+        }
+      }
+    },
+    "ruleHits": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}
