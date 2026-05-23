@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fraudshield.ai/schemas/event-fraud-decision.schema.json",
+  "title": "FraudDecisionEvent",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "transactionId", "decision", "riskScore"],
+  "properties": {
+    "eventId": { "type": "string" },
+    "eventType": { "type": "string", "const": "fraud.decision.made" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "transactionId": { "type": "string" },
+    "decision": { "type": "string", "enum": ["allow", "challenge_otp", "block"] },
+    "riskScore": { "type": "number", "minimum": 0, "maximum": 100 },
+    "modelVersion": { "type": "string" },
+    "ruleHits": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}
