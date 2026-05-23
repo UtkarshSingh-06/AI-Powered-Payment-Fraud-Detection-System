@@ -1,0 +1,11 @@
+packages:
+  - 'backend'
+  - 'frontend'
+  - 'apps/*'
+  - 'packages/*'
+  - 'services/auth-service'
+  - 'services/ingestion-service'
+  - 'services/scoring-service'
+  - 'services/case-service'
+  - 'services/rules-engine'
+  - 'services/notification-service'
