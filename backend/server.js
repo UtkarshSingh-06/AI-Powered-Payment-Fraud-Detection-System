@@ -8,17 +8,33 @@ import client from 'prom-client';
 import { createServer } from 'http';
 import { setupWebSocket } from './services/websocket.js';
 import { initializeDatabase } from './config/database.js';
+import { runDeepHealthCheck } from './services/healthCheck.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const corsOriginEnv =
+  process.env.CORS_ORIGIN || 'http://localhost:3002,http://localhost:3000';
+const allowedOrigins = corsOriginEnv
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // Middleware
 app.use(helmet());
 app.use(compression());
-app.use(cors({ origin: corsOrigin, credentials: true }));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -38,14 +54,25 @@ app.get('/api/metrics', async (_req, res) => {
 
 await initializeDatabase();
 
-const [{ default: authRoutes }, { default: transactionRoutes }, { default: analyticsRoutes }, { default: recommendationRoutes }, { default: adminRoutes }] =
-  await Promise.all([
-    import('./routes/auth.js'),
-    import('./routes/transactions.js'),
-    import('./routes/analytics.js'),
-    import('./routes/recommendations.js'),
-    import('./routes/admin.js')
-  ]);
+const [
+  { default: authRoutes },
+  { default: transactionRoutes },
+  { default: analyticsRoutes },
+  { default: recommendationRoutes },
+  { default: adminRoutes },
+  { default: auditRoutes },
+  { default: billingRoutes },
+  { default: complianceRoutes }
+] = await Promise.all([
+  import('./routes/auth.js'),
+  import('./routes/transactions.js'),
+  import('./routes/analytics.js'),
+  import('./routes/recommendations.js'),
+  import('./routes/admin.js'),
+  import('./routes/audit.js'),
+  import('./routes/billing.js'),
+  import('./routes/compliance.js')
+]);
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -53,10 +80,24 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/audit', auditRoutes);
+app.use('/api/billing', billingRoutes);
+app.use('/api/compliance', complianceRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/docs', (_req, res) => {
+  res.redirect(302, '/openapi/fraudshield-api.yaml');
+});
+
+// Health check (liveness)
+app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Fraud Detection API is running' });
+});
+
+// Deep health (readiness — dependency checks)
+app.get('/api/health/deep', async (_req, res) => {
+  const report = await runDeepHealthCheck();
+  const statusCode = report.status === 'healthy' ? 200 : 503;
+  res.status(statusCode).json(report);
 });
 
 // Error handling middleware
