@@ -52,6 +52,7 @@ function Layout() {
 
   return (
     <div className="layout">
+      <div className="fs-ambient-bg" aria-hidden="true" />
       <button
         type="button"
         className="layout-mobile-toggle"
@@ -82,8 +83,11 @@ function Layout() {
             <X size={22} />
           </button>
           <Link to="/app/dashboard" className="sidebar-brand" onClick={() => setSidebarOpen(false)}>
-            <span className="sidebar-logo-text">FraudShield AI</span>
-            <span className="sidebar-tagline">AI fraud payment detector</span>
+            <Shield size={22} className="sidebar-brand-icon" />
+            <div>
+              <span className="sidebar-logo-text">FraudShield</span>
+              <span className="sidebar-tagline">Fraud detection platform</span>
+            </div>
           </Link>
           <div className="sidebar-user">
             <span className="user-name">{user?.name}</span>
@@ -115,7 +119,9 @@ function Layout() {
       </nav>
 
       <main className="main-content">
-        <Outlet />
+        <div className="fs-app-page">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
