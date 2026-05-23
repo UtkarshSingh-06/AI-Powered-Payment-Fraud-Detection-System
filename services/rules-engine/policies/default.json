@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "shadowMode": false,
+  "rules": [
+    {
+      "id": "high_amount_hard_stop",
+      "type": "amount_threshold",
+      "threshold": 100000,
+      "minRisk": 70,
+      "decision": "block"
+    },
+    {
+      "id": "high_velocity_step_up",
+      "type": "velocity",
+      "threshold": 5,
+      "decision": "challenge_otp"
+    }
+  ]
+}
