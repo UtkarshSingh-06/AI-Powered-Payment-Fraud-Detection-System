@@ -1,7 +1,10 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { readData, writeData, appendData } from '../config/database.js';
-import { publishEvent } from '../config/rabbitmq.js';
+import { publishPlatformEvent } from '../services/eventBus.js';
+import { validateScoringRequest } from '@fraudshield/contracts';
+import { buildDeviceFingerprint } from '../services/deviceFingerprint.js';
+import { enrichGeoIntelligence } from '../services/geoIntelligence.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { analyzeFraudRisk } from '../services/fraudDetection.js';
 import { broadcastTransaction, broadcastFraudAlert } from '../services/websocket.js';
@@ -135,7 +138,9 @@ router.post('/', authenticateToken, async (req, res, next) => {
       location,
       country,
       deviceId,
-      timestamp
+      timestamp,
+      clientFingerprint,
+      ipAddress
     } = req.body;
 
     const numericAmount = Number(amount);
@@ -184,21 +189,53 @@ router.post('/', authenticateToken, async (req, res, next) => {
     const userHistory = transactions.filter(t => t.userId === req.user.userId);
     
     // Create transaction object
+    const correlationId = uuidv4();
+    const deviceFingerprint = buildDeviceFingerprint({
+      userAgent: req.headers['user-agent'],
+      deviceId,
+      clientFingerprint,
+      ipAddress: ipAddress || req.ip
+    });
+    const geoIntel = enrichGeoIntelligence({
+      ipAddress: ipAddress || req.ip,
+      country,
+      location
+    });
+
     const transaction = {
       transactionId: uuidv4(),
+      correlationId,
+      tenantId: req.user.tenantId || 'default',
       userId: req.user.userId,
       amount: numericAmount,
       currency,
       merchantName,
       merchantCategory,
       paymentMethod: paymentMethod || 'Credit Card',
-      location: location || country || 'Unknown',
-      country: country || 'Unknown',
-      deviceId: deviceId || `device_${req.user.userId}`,
+      location: geoIntel.location || location || country || 'Unknown',
+      country: geoIntel.country || country || 'Unknown',
+      deviceId: deviceId || deviceFingerprint.deviceId,
+      deviceFingerprint,
+      geoIntelligence: geoIntel,
+      ipAddress: ipAddress || req.ip,
       timestamp: timestamp || new Date().toISOString(),
       status: 'pending',
       createdAt: new Date().toISOString()
     };
+
+    const scoringValidation = validateScoringRequest({
+      transactionId: transaction.transactionId,
+      userId: transaction.userId,
+      amount: transaction.amount,
+      merchantCategory: transaction.merchantCategory,
+      merchantName: transaction.merchantName,
+      timestamp: transaction.timestamp,
+      deviceId: transaction.deviceId,
+      featureVector: {}
+    });
+    if (!scoringValidation.valid) {
+      return res.status(400).json({ message: scoringValidation.errors.join('; ') });
+    }
     
     const featureVector = await buildFeatureVector(transaction, userHistory);
     const scoringPayload = { ...transaction, featureVector };
@@ -249,13 +286,13 @@ router.post('/', authenticateToken, async (req, res, next) => {
       action: transaction.status
     });
     
-    await publishEvent('transaction.ingested', {
+    await publishPlatformEvent('transaction.ingested', {
       eventId: uuidv4(),
       eventType: 'transaction.ingested',
       timestamp: new Date().toISOString(),
       transaction
     });
-    await publishEvent('fraud.decision.made', {
+    await publishPlatformEvent('fraud.decision.made', {
       eventId: uuidv4(),
       eventType: 'fraud.decision.made',
       timestamp: new Date().toISOString(),
@@ -263,7 +300,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
       decision: transaction.riskDecision,
       riskScore: fraudAnalysis.score,
       modelVersion: fraudAnalysis.modelVersion,
-      ruleHits: fraudAnalysis.ruleHits
+      ruleHits: fraudAnalysis.ruleHits || []
     });
     await writeAuditLog('transaction_scored', req.user.userId, {
       transactionId: transaction.transactionId,
