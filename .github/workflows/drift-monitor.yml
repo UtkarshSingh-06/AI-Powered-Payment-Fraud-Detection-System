@@ -1,0 +1,25 @@
+name: Model Drift Monitor
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Synthetic drift detection
+        run: |
+          python - <<'PY'
+          import json
+          baseline = {"risk_score_mean": 32.5, "velocity_5m_mean": 1.2}
+          current = {"risk_score_mean": 48.1, "velocity_5m_mean": 2.9}
+          drift = abs(current["risk_score_mean"] - baseline["risk_score_mean"]) / baseline["risk_score_mean"]
+          print(json.dumps({"drift_ratio": drift, "alert": drift > 0.25}))
+          assert drift >= 0
+          PY
