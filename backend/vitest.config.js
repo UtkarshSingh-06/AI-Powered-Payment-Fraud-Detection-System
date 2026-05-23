@@ -5,6 +5,9 @@ export default defineConfig({
     include: ['tests/**/*.test.js'],
     setupFiles: ['tests/setup.js'],
     environment: 'node',
-    globals: true
+    globals: true,
+    deps: {
+      inline: ['@fraudshield/contracts', 'kafkajs']
+    }
   }
 });
