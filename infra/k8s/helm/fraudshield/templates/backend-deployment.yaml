@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraudshield-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: fraudshield-backend
+  template:
+    metadata:
+      labels:
+        app: fraudshield-backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image }}:{{ .Values.global.imageTag }}"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_ENV
+              value: production
