@@ -1,0 +1,68 @@
+openapi: 3.1.0
+info:
+  title: FraudShield Enterprise API
+  version: 2.0.0
+  description: Financial risk intelligence platform API
+servers:
+  - url: http://localhost:8080/api
+    description: API Gateway (local)
+paths:
+  /health:
+    get:
+      summary: Liveness check
+      responses:
+        '200':
+          description: OK
+  /auth/login:
+    post:
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: JWT issued
+  /transactions:
+    get:
+      summary: List transactions
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Transaction list
+    post:
+      summary: Create and score transaction
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Scored transaction
+  /ingest/ingest:
+    post:
+      summary: High-throughput async ingestion
+      responses:
+        '202':
+          description: Accepted for processing
+  /score/score:
+    post:
+      summary: Real-time fraud scoring
+      responses:
+        '200':
+          description: Scoring response
+  /cases:
+    get:
+      summary: List investigation cases
+      responses:
+        '200':
+          description: Cases
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
