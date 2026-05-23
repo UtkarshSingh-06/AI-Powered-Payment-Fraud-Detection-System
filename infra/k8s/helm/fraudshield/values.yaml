@@ -1,0 +1,20 @@
+global:
+  imageTag: latest
+  environment: staging
+
+apiGateway:
+  replicaCount: 2
+  image: fraudshield/api-gateway
+
+backend:
+  replicaCount: 3
+  image: fraudshield/backend
+
+inference:
+  replicaCount: 3
+  image: fraudshield/inference
+  strategy: blueGreen
+
+ingress:
+  enabled: true
+  host: api.fraudshield.local
