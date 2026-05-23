@@ -1,0 +1,33 @@
+{
+  "name": "fraudshield-platform",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Enterprise Fraud Intelligence Platform — monorepo",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "apps/*",
+    "packages/*",
+    "services/auth-service",
+    "services/ingestion-service",
+    "services/scoring-service",
+    "services/case-service",
+    "services/rules-engine",
+    "services/notification-service"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "backend:dev": "npm run dev --workspace=backend",
+    "frontend:dev": "npm run dev --workspace=frontend",
+    "gateway:dev": "npm run dev --workspace=@fraudshield/api-gateway"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
