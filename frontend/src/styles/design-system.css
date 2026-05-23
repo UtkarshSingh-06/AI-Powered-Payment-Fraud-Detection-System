@@ -1,0 +1,202 @@
+/* FraudShield design system — matches landing (Tenbin-inspired) */
+
+:root {
+  --fs-bg: #030403;
+  --fs-surface: rgba(255, 255, 255, 0.03);
+  --fs-surface-elevated: rgba(255, 255, 255, 0.05);
+  --fs-border: rgba(255, 255, 255, 0.08);
+  --fs-border-strong: rgba(255, 255, 255, 0.14);
+  --fs-accent: #4ade80;
+  --fs-accent-dim: #22c55e;
+  --fs-text: #f4f4f5;
+  --fs-text-muted: rgba(255, 255, 255, 0.5);
+  --fs-font-display: 'Syne', 'DM Sans', sans-serif;
+  --fs-radius: 12px;
+  --fs-radius-lg: 20px;
+  --fs-radius-pill: 999px;
+}
+
+/* Ambient background (grid + vignette) */
+.fs-ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--fs-bg);
+}
+
+.fs-ambient-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(74, 222, 128, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 222, 128, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 15%, transparent 70%);
+}
+
+.fs-ambient-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 70% 20%, rgba(34, 197, 94, 0.08), transparent 55%);
+}
+
+/* Top navigation (landing + auth) */
+.fs-top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  background: linear-gradient(to bottom, rgba(3, 4, 3, 0.92), transparent);
+  backdrop-filter: blur(12px);
+}
+
+.fs-top-nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fs-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.fs-brand svg {
+  color: var(--fs-accent);
+}
+
+.fs-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.fs-nav-actions a {
+  color: var(--fs-text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.fs-nav-actions a:hover {
+  color: #fff;
+}
+
+/* Buttons */
+.fs-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--fs-radius-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.fs-btn-pill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.fs-btn-pill--white {
+  background: #fff;
+  color: #030403;
+}
+
+.fs-btn-pill--white:hover:not(:disabled) {
+  background: var(--fs-accent);
+  transform: translateY(-1px);
+}
+
+.fs-btn-pill--ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--fs-border-strong);
+}
+
+.fs-btn-pill--ghost:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.fs-btn-pill--accent {
+  background: var(--fs-accent-dim);
+  color: #030403;
+}
+
+.fs-btn-pill--accent:hover:not(:disabled) {
+  background: var(--fs-accent);
+  transform: translateY(-1px);
+}
+
+.fs-btn-pill--full {
+  width: 100%;
+}
+
+/* Cards */
+.fs-panel {
+  background: var(--fs-surface);
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-lg);
+  backdrop-filter: blur(16px);
+}
+
+.fs-panel--pad {
+  padding: 32px;
+}
+
+/* App layout */
+.fs-app-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.fs-page-header {
+  margin-bottom: 32px;
+}
+
+.fs-page-header h1 {
+  font-family: var(--fs-font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--fs-text);
+  margin-bottom: 8px;
+}
+
+.fs-page-header p {
+  color: var(--fs-text-muted);
+  font-size: 0.95rem;
+  max-width: 560px;
+}
+
+.fs-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fs-text-muted);
+  margin-bottom: 12px;
+  display: block;
+}
