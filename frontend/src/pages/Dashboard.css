@@ -1,9 +1,9 @@
 .dashboard {
   position: relative;
-  max-width: 1600px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 24px;
-  min-height: 100vh;
+  padding: 0;
+  min-height: auto;
   overflow-x: hidden;
 }
 
@@ -70,8 +70,8 @@
 .dashboard-header {
   position: relative;
   z-index: 1;
-  margin-bottom: 48px;
-  padding: 32px 0;
+  margin-bottom: 32px;
+  padding: 0;
 }
 
 .header-content {
@@ -127,38 +127,23 @@
 /* Glass Card Effect */
 .glass-card {
   position: relative;
-  background: rgba(13, 26, 13, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 28px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.25s ease, transform 0.25s ease;
   overflow: hidden;
 }
 
 .glass-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(34, 197, 94, 0.5), 
-    rgba(22, 163, 74, 0.5), 
-    transparent
-  );
+  display: none;
 }
 
 .glass-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(34, 197, 94, 0.4);
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 40px rgba(34, 197, 94, 0.1),
-    inset 0 0 40px rgba(34, 197, 94, 0.05);
+  transform: translateY(-4px);
+  border-color: rgba(74, 222, 128, 0.25);
 }
 
 /* Card Glow Effects */
