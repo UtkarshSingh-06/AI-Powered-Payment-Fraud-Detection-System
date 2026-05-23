@@ -1,0 +1,8 @@
+{
+  "name": "@fraudshield/sdk",
+  "version": "1.0.0",
+  "description": "Node.js SDK for FraudShield Enterprise API",
+  "type": "module",
+  "main": "index.js",
+  "exports": { ".": "./index.js" }
+}
