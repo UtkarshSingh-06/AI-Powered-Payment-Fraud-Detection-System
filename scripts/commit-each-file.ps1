@@ -11,14 +11,41 @@ function Get-CommitMessage([string]$f) {
         ".github/workflows/drift-monitor.yml" = "ci: add scheduled model drift monitoring workflow"
         ".github/workflows/retrain-model.yml" = "ci: point retrain workflow to MLflow training pipeline in ml/training"
         "package.json" = "chore: add monorepo root package with npm workspaces and Turbo scripts"
-        "package-lock.json" = "chore: add root package-lock for workspace dependency resolution"
+        "package-lock.json" = "chore: sync root package-lock for workspace and frontend dependency updates"
         "pnpm-workspace.yaml" = "chore: add pnpm workspace definition for monorepo packages"
         "turbo.json" = "chore: add Turborepo task pipeline configuration"
         "PLATFORM.md" = "docs: add enterprise platform quick start, service map, and local URLs"
         "docker-compose.yml" = "infra: add Redpanda, microservices, API gateway, and observability stack to Compose"
         "openapi/fraudshield-api.yaml" = "docs: add OpenAPI 3.1 specification for enterprise FraudShield API"
+        "scripts/hard-launch.ps1" = "chore(scripts): add hard-launch script to start inference, backend, gateway, and frontend"
+        "frontend/src/styles/design-system.css" = "feat(frontend): add shared FraudShield design tokens and UI primitives"
+        "frontend/src/components/AuthShell.jsx" = "feat(frontend): add AuthShell layout matching landing page aesthetic"
+        "frontend/src/components/ErrorBoundary.jsx" = "feat(frontend): add React error boundary for graceful UI failures"
+        "frontend/src/components/landing/HeroScene3D.jsx" = "feat(frontend): add Three.js WebGL hero scene for landing page"
+        "frontend/src/components/landing/SceneFallback.jsx" = "feat(frontend): add CSS fallback orb scene when WebGL is unavailable"
+        "frontend/src/components/landing/scene-shared.css" = "feat(frontend): extract shared hero scene styles for landing and auth"
+        "frontend/src/components/landing/AnimatedCounter.jsx" = "feat(frontend): add animated metric counter for landing stats"
+        "frontend/index.html" = "feat(frontend): load Syne display font for unified branding"
+        "frontend/vite.config.js" = "fix(frontend): configure dev server on port 3002 with flexible strictPort"
     }
     if ($messages.ContainsKey($f)) { return $messages[$f] }
+
+    if ($f -eq "frontend/src/pages/Login.jsx") { return "feat(frontend): redesign login page with AuthShell and landing-aligned UI" }
+    if ($f -eq "frontend/src/pages/Register.jsx") { return "feat(frontend): redesign register page to match unified auth experience" }
+    if ($f -eq "frontend/src/pages/Auth.css") { return "style(frontend): restyle auth pages with dark minimal FraudShield theme" }
+    if ($f -eq "frontend/src/pages/About.jsx") { return "feat(frontend): enhance Tenbin-style landing with 3D hero and compare table" }
+    if ($f -eq "frontend/src/pages/About.css") { return "style(frontend): update landing styles and import shared scene CSS" }
+    if ($f -eq "frontend/src/components/Layout.jsx") { return "feat(frontend): add ambient background and FraudShield sidebar branding" }
+    if ($f -eq "frontend/src/components/Layout.css") { return "style(frontend): align app shell sidebar and layout with design system" }
+    if ($f -eq "frontend/src/pages/Dashboard.jsx") { return "refactor(frontend): simplify dashboard header to match design system" }
+    if ($f -eq "frontend/src/pages/Dashboard.css") { return "style(frontend): soften dashboard cards to match landing glass panels" }
+    if ($f -eq "frontend/src/App.css") { return "style(frontend): unify global cards, tables, and buttons with design tokens" }
+    if ($f -eq "frontend/src/index.css") { return "style(frontend): import design system and update base color palette" }
+    if ($f -eq "frontend/src/main.jsx") { return "feat(frontend): wrap app with ErrorBoundary at root" }
+    if ($f -eq "frontend/package.json") { return "feat(frontend): add three.js and react-three-fiber for 3D landing hero" }
+    if ($f -match "^frontend/dist/assets/.*\.js$") { return "build(frontend): update production JS bundle - $(Split-Path $f -Leaf)" }
+    if ($f -match "^frontend/dist/assets/.*\.css$") { return "build(frontend): update production CSS bundle - $(Split-Path $f -Leaf)" }
+    if ($f -eq "frontend/dist/index.html") { return "build(frontend): refresh Vite dist index after production build" }
 
     if ($f -match "^apps/api-gateway/") { return "feat(gateway): add API gateway component - $(Split-Path $f -Leaf)" }
     if ($f -match "^apps/web/") { return "feat(web): add Next.js enterprise dashboard - $(Split-Path $f -Leaf)" }
@@ -51,14 +78,18 @@ function Get-CommitMessage([string]$f) {
 }
 
 $modified = git diff --name-only
+$deleted = git diff --name-only --diff-filter=D
 $untracked = git ls-files --others --exclude-standard
-$all = ($modified + $untracked) | Where-Object { $_ -and $_ -notmatch '__pycache__|\.pyc$|node_modules' } | Sort-Object -Unique
+$all = ($modified + $deleted + $untracked) | Where-Object { $_ -and $_ -notmatch '__pycache__|\.pyc$|node_modules|\.env$' } | Sort-Object -Unique
 
 $count = 0
 foreach ($file in $all) {
-    if (-not (Test-Path $file)) { continue }
     git add -- "$file"
+    if ($LASTEXITCODE -ne 0) { Write-Warning "Could not stage $file"; continue }
     $msg = Get-CommitMessage $file
+    if ($file -in $deleted) {
+        $msg = "chore(frontend): remove stale production bundle - $(Split-Path $file -Leaf)"
+    }
     git commit -m $msg
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "Skip or empty commit for $file"
