@@ -1,10 +1,27 @@
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { initializeDatabase, readData, appendData } from '../config/database.js';
+import { getPostgresPool } from '../config/postgres.js';
 
 dotenv.config();
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+async function runEnterpriseSchema() {
+  const pool = getPostgresPool();
+  if (!pool) {
+    return;
+  }
+  const sql = readFileSync(join(__dirname, 'enterprise-schema.sql'), 'utf-8');
+  await pool.query(sql);
+  console.log('Enterprise schema applied.');
+}
+
 async function runMigration() {
   await initializeDatabase();
+  await runEnterpriseSchema();
 
   // Data copy utility for file-store -> postgres execution.
   if (!process.env.DATABASE_URL) {
