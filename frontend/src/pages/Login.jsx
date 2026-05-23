@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import BlurText from '../components/BlurText';
-import { Shield, Lock, Mail, ArrowRight, Sparkles, Zap, Eye, AlertTriangle } from 'lucide-react';
+import AuthShell from '../components/AuthShell';
+import { Lock, Mail, ArrowRight, Eye, AlertTriangle } from 'lucide-react';
 import './Auth.css';
+
+function LoginAside() {
+  return (
+    <>
+      <p className="fs-eyebrow">Secure access</p>
+      <h1 className="fs-auth-headline">
+        Real-time fraud intelligence
+        <span> for your payments</span>
+      </h1>
+      <p className="fs-auth-lead">
+        Sub-100ms scoring, explainable decisions, and enterprise-grade audit trails — the same
+        platform power shown on our home page.
+      </p>
+      <ul className="fs-auth-features">
+        <li>24/7 transaction monitoring</li>
+        <li>ML + rules hybrid scoring</li>
+        <li>UPI &amp; card coverage</li>
+      </ul>
+    </>
+  );
+}
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -19,7 +39,6 @@ function Login() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       await login(email, password);
       navigate('/app/dashboard');
@@ -31,190 +50,89 @@ function Login() {
   };
 
   return (
-    <div className="auth-page">
-      {/* Animated Background */}
-      <div className="auth-background">
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-        <div className="gradient-orb orb-3"></div>
-      </div>
+    <AuthShell aside={<LoginAside />}>
+      <div className="fs-panel fs-panel--pad fs-auth-card">
+        <h2 className="fs-auth-card-title">Welcome back</h2>
+        <p className="fs-auth-card-sub">Sign in to continue to your dashboard</p>
 
-      <div className="auth-container">
-        {/* Left Side - Description */}
-        <div className="auth-description">
-          <div className="description-content">
-            <div className="logo-section">
-              <div className="logo-icon">
-                <Shield size={48} />
-              </div>
-              <BlurText 
-                text="FraudShield AI - UPI Fraud Detection Platform"
-                className="auth-main-title"
-                delay={80}
-                animateBy="words"
-                direction="top"
-                stepDuration={0.3}
+        {error && (
+          <div className="fs-alert fs-alert--error">
+            <AlertTriangle size={18} />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="fs-auth-form">
+          <div className="fs-field">
+            <label>
+              <Mail size={16} />
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@company.com"
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="fs-field">
+            <label>
+              <Lock size={16} />
+              Password
+            </label>
+            <div className="fs-password-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                autoComplete="current-password"
               />
-            </div>
-            
-            <p className="auth-description-text">
-              Secure your UPI transactions with cutting-edge AI technology. Our advanced fraud detection system 
-              specifically designed for UPI payments analyzes transactions in real-time, identifying suspicious 
-              patterns across PhonePe, Google Pay, Paytm, and all UPI apps before they impact your business.
-            </p>
-
-            <div className="features-list">
-              <div className="feature-item">
-                <div className="feature-icon">
-                  <Zap size={20} />
-                </div>
-                <span>Real-time UPI fraud detection and monitoring</span>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">
-                  <Eye size={20} />
-                </div>
-                <span>AI-powered UPI risk analysis and scoring</span>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">
-                  <Sparkles size={20} />
-                </div>
-                <span>Support for all major UPI apps in India</span>
-              </div>
-            </div>
-
-            <div className="auth-stats">
-              <div className="stat-item">
-                <div className="stat-value">99.9%</div>
-                <div className="stat-label">UPI Accuracy</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-value">&lt;100ms</div>
-                <div className="stat-label">Response Time</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-value">24/7</div>
-                <div className="stat-label">UPI Monitoring</div>
-              </div>
+              <button type="button" className="fs-password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">
+                <Eye size={18} />
+              </button>
             </div>
           </div>
+
+          <button type="submit" className="fs-btn-pill fs-btn-pill--white fs-btn-pill--full" disabled={loading}>
+            {loading ? 'Signing in…' : (
+              <>
+                Sign in
+                <ArrowRight size={18} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <div className="fs-auth-divider">
+          <span>or</span>
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="auth-form-container">
-          <div className="auth-card glass-card">
-            <div className="card-glow"></div>
-            
-            <div className="auth-card-header">
-              <h2 className="auth-card-title">Welcome Back</h2>
-              <p className="auth-card-subtitle">Sign in to continue to your dashboard</p>
+        <Link to="/register" className="fs-btn-pill fs-btn-pill--ghost fs-btn-pill--full">
+          Create account
+        </Link>
+
+        <div className="fs-demo-box">
+          <p className="fs-demo-title">Demo credentials</p>
+          <div className="fs-demo-grid">
+            <div>
+              <span className="fs-demo-role">Admin</span>
+              <code>admin@frauddetection.com</code>
+              <code>admin123</code>
             </div>
-
-            {error && (
-              <div className="alert alert-error">
-                <AlertTriangle size={18} />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="auth-form">
-              <div className="form-group">
-                <label className="form-label">
-                  <Mail size={18} />
-                  <span>Email Address</span>
-                </label>
-                <input
-                  type="email"
-                  className="form-input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  <Lock size={18} />
-                  <span>Password</span>
-                </label>
-                <div className="password-input-wrapper">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    <Eye size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <button 
-                type="submit" 
-                className="btn btn-primary btn-login" 
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <div className="btn-spinner"></div>
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In</span>
-                    <ArrowRight size={20} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="auth-divider">
-              <span>or</span>
+            <div>
+              <span className="fs-demo-role">User</span>
+              <code>john.doe@example.com</code>
+              <code>password123</code>
             </div>
-
-            <Link to="/register" className="btn btn-secondary btn-create-account">
-              <Sparkles size={18} />
-              <span>Create New Account</span>
-            </Link>
-
-            <div className="demo-credentials">
-              <p className="demo-credentials-title">Demo login (after running backend seed)</p>
-              <div className="demo-credentials-grid">
-                <div className="demo-cred-block">
-                  <span className="demo-cred-role">Admin</span>
-                  <code>admin@frauddetection.com</code>
-                  <code>admin123</code>
-                </div>
-                <div className="demo-cred-block">
-                  <span className="demo-cred-role">User</span>
-                  <code>john.doe@example.com</code>
-                  <code>password123</code>
-                </div>
-              </div>
-            </div>
-            
-            <div style={{ marginTop: '24px', textAlign: 'center' }}>
-              <Link to="/about" style={{ color: 'rgba(229, 231, 235, 0.6)', fontSize: '0.85rem', textDecoration: 'none' }}>
-                Learn more about FraudShield AI →
-              </Link>
-            </div>
-
-            <p className="auth-footer-text">
-              By signing in, you agree to our Terms of Service and Privacy Policy
-            </p>
           </div>
         </div>
       </div>
-    </div>
+    </AuthShell>
   );
 }
 
