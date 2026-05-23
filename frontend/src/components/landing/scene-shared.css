@@ -1,0 +1,78 @@
+/* Shared hero / auth ambient scene */
+
+.hero-scene-3d {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-scene-3d canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero-scene-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, transparent 0%, #030403 72%);
+  pointer-events: none;
+}
+
+.hero-scene-fallback {
+  background: #030403;
+}
+
+.fallback-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: fallback-float 22s ease-in-out infinite;
+}
+
+.fallback-orb-1 {
+  width: 520px;
+  height: 520px;
+  background: #16a34a;
+  top: -120px;
+  left: -80px;
+}
+
+.fallback-orb-2 {
+  width: 420px;
+  height: 420px;
+  background: #15803d;
+  bottom: 10%;
+  right: -60px;
+  animation-delay: 7s;
+}
+
+.fallback-orb-3 {
+  width: 360px;
+  height: 360px;
+  background: #22c55e;
+  top: 40%;
+  left: 35%;
+  animation-delay: 14s;
+}
+
+@keyframes fallback-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -20px) scale(1.08);
+  }
+}
+
+.hero-scene-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(74, 222, 128, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 222, 128, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 15%, transparent 70%);
+}
