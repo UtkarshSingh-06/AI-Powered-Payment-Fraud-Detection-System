@@ -1,0 +1,12 @@
+{
+  "name": "@fraudshield/ingestion-service",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "@fraudshield/contracts": "file:../../packages/contracts",
+    "express": "^4.18.2",
+    "kafkajs": "^2.2.4",
+    "uuid": "^9.0.1"
+  }
+}
