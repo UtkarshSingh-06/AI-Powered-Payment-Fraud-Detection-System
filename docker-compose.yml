@@ -32,6 +32,30 @@ services:
     networks:
       - fraudshield-network
 
+  redpanda:
+    image: redpandadata/redpanda:v24.2.4
+    container_name: fraudshield-redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "1"
+      - --memory
+      - 1G
+      - --reserve-memory
+      - 0M
+      - --node-id
+      - "0"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:9092
+    ports:
+      - "9092:9092"
+    networks:
+      - fraudshield-network
+
   inference:
     build:
       context: ./services/inference-fastapi
@@ -54,10 +78,14 @@ services:
       - PORT=5000
       - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - JWT_EXPIRES_IN=7d
-      - CORS_ORIGIN=http://localhost:3000
+      - CORS_ORIGIN=http://localhost:3002,http://localhost:3000
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fraudshield
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - KAFKA_BROKERS=redpanda:9092
+      - KAFKA_TOPIC_transactions.ingested=transactions.ingested
+      - KAFKA_TOPIC_fraud.decisions=fraud.decisions
+      - KAFKA_TOPIC_fraud.labels=fraud.labels
       - INFERENCE_URL=http://inference:8000
     env_file:
       - ./backend/.env
@@ -65,6 +93,7 @@ services:
       - postgres
       - redis
       - rabbitmq
+      - redpanda
       - inference
     restart: unless-stopped
     healthcheck:
@@ -76,25 +105,125 @@ services:
     networks:
       - fraudshield-network
 
+  api-gateway:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile
+    container_name: fraudshield-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - BACKEND_URL=http://backend:5000
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - INGESTION_SERVICE_URL=http://ingestion-service:5002
+      - SCORING_SERVICE_URL=http://scoring-service:5003
+      - CASE_SERVICE_URL=http://case-service:5004
+      - RULES_ENGINE_URL=http://rules-engine:5005
+    depends_on:
+      - backend
+      - auth-service
+      - ingestion-service
+      - scoring-service
+      - case-service
+      - rules-engine
+    networks:
+      - fraudshield-network
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: fraudshield-auth-service
+    environment:
+      - PORT=5001
+      - BACKEND_URL=http://backend:5000
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+    networks:
+      - fraudshield-network
+
+  ingestion-service:
+    build:
+      context: ./services/ingestion-service
+      dockerfile: Dockerfile
+    container_name: fraudshield-ingestion-service
+    environment:
+      - PORT=5002
+      - BACKEND_URL=http://backend:5000
+      - KAFKA_BROKERS=redpanda:9092
+    depends_on:
+      - redpanda
+      - backend
+    networks:
+      - fraudshield-network
+
+  scoring-service:
+    build:
+      context: ./services/scoring-service
+      dockerfile: Dockerfile
+    container_name: fraudshield-scoring-service
+    environment:
+      - PORT=5003
+      - INFERENCE_URL=http://inference:8000
+      - RULES_ENGINE_URL=http://rules-engine:5005
+    depends_on:
+      - inference
+      - rules-engine
+    networks:
+      - fraudshield-network
+
+  case-service:
+    build:
+      context: ./services/case-service
+      dockerfile: Dockerfile
+    container_name: fraudshield-case-service
+    environment:
+      - PORT=5004
+      - BACKEND_URL=http://backend:5000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fraudshield
+    depends_on:
+      - postgres
+      - backend
+    networks:
+      - fraudshield-network
+
+  rules-engine:
+    build:
+      context: ./services/rules-engine
+      dockerfile: Dockerfile
+    container_name: fraudshield-rules-engine
+    environment:
+      - PORT=5005
+    networks:
+      - fraudshield-network
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: fraudshield-notification-service
+    environment:
+      - PORT=5006
+      - KAFKA_BROKERS=redpanda:9092
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+    depends_on:
+      - redpanda
+    networks:
+      - fraudshield-network
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8080/api}
         - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:5000/ws}
     container_name: fraudshield-frontend
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      - api-gateway
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     networks:
       - fraudshield-network
 
@@ -102,15 +231,39 @@ services:
     image: python:3.11-slim
     container_name: fraudshield-feature-pipeline
     working_dir: /app
-    command: sh -c "pip install --no-cache-dir pika redis && python worker.py"
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python kafka_worker.py"
     volumes:
       - ./services/feature-pipeline:/app
     environment:
       - REDIS_URL=redis://redis:6379/0
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
+      - KAFKA_BROKERS=redpanda:9092
+      - KAFKA_TOPIC_TRANSACTIONS=transactions.ingested
     depends_on:
       - redis
-      - rabbitmq
+      - redpanda
+    networks:
+      - fraudshield-network
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: fraudshield-prometheus
+    volumes:
+      - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - fraudshield-network
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: fraudshield-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
     networks:
       - fraudshield-network
 
