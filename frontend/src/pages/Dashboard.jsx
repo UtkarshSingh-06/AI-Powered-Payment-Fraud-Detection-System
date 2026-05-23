@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import BlurText from '../components/BlurText';
 import { 
   TrendingUp, 
   AlertTriangle, 
@@ -66,32 +65,13 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <div className="dashboard-background">
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-        <div className="gradient-orb orb-3"></div>
-      </div>
-      
-      <div className="dashboard-header">
-        <div className="header-content">
-          <BlurText 
-            text="Dashboard"
-            className="dashboard-title"
-            delay={100}
-            animateBy="words"
-            direction="top"
-            stepDuration={0.4}
-            animationFrom={{ filter: 'blur(15px)', opacity: 0, y: -30 }}
-            animationTo={[
-              { filter: 'blur(8px)', opacity: 0.6, y: 5 },
-              { filter: 'blur(0px)', opacity: 1, y: 0 }
-            ]}
-          />
-          <p className="dashboard-subtitle">
-            Welcome back, <span className="highlight-name">{user?.name}</span>! Here's your UPI fraud overview.
-          </p>
-        </div>
-      </div>
+      <header className="dashboard-header fs-page-header">
+        <p className="fs-eyebrow">Overview</p>
+        <h1>Dashboard</h1>
+        <p className="dashboard-subtitle">
+          Welcome back, <span className="highlight-name">{user?.name}</span> — your UPI fraud overview.
+        </p>
+      </header>
 
       {/* Summary Cards */}
       <div className="stats-grid">
