@@ -15,7 +15,11 @@ const filenameToTable = {
   'recommendations.json': { table: 'recommendations', key: 'recommendationId' },
   'labels.json': { table: 'labels', key: 'labelId' },
   'modelVersions.json': { table: 'model_versions', key: 'modelVersionId' },
-  'auditLogs.json': { table: 'audit_logs', key: 'auditId' }
+  'auditLogs.json': { table: 'audit_logs', key: 'auditId' },
+  'apiKeys.json': { table: 'api_keys', key: 'keyId' },
+  'alerts.json': { table: 'alerts', key: 'alertId' },
+  'refreshTokens.json': { table: 'refresh_tokens', key: 'refreshId' },
+  'cases.json': { table: 'fraud_cases_local', key: 'caseId' }
 };
 
 async function initializeFileStore() {
@@ -77,6 +81,20 @@ async function initializePostgres() {
   await runQuery(`
     CREATE TABLE IF NOT EXISTS audit_logs (
       audit_id TEXT PRIMARY KEY,
+      payload JSONB NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `);
+  await runQuery(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      key_id TEXT PRIMARY KEY,
+      payload JSONB NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `);
+  await runQuery(`
+    CREATE TABLE IF NOT EXISTS alerts (
+      alert_id TEXT PRIMARY KEY,
       payload JSONB NOT NULL,
       created_at TIMESTAMPTZ DEFAULT now()
     );
