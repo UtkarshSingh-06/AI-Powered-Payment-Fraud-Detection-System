@@ -4,11 +4,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package manifest only (lock file may contain host-specific optional deps)
+COPY package.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (npm install resolves Linux-native optional deps in container)
+RUN npm install
 
 # Copy application code
 COPY . .
