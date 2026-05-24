@@ -68,7 +68,7 @@ jobs:
       - name: Install and build frontend
         working-directory: frontend
         run: |
-          npm ci
+          npm install
           npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
             lightningcss-linux-x64-gnu@1.30.2 \
             @tailwindcss/oxide-linux-x64-gnu@4.1.18
@@ -129,7 +129,7 @@ jobs:
       - name: Build frontend for e2e
         working-directory: frontend
         run: |
-          npm ci
+          npm install
           npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
             lightningcss-linux-x64-gnu@1.30.2 \
             @tailwindcss/oxide-linux-x64-gnu@4.1.18
