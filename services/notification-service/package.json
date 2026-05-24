@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": { "start": "node server.js" },
   "dependencies": {
-    "express": "^4.18.2",
-    "kafkajs": "^2.2.4"
+    "@fraudshield/platform-kafka": "file:../../packages/platform-kafka",
+    "@fraudshield/platform-auth": "file:../../packages/platform-auth",
+    "express": "^4.18.2"
   }
 }
