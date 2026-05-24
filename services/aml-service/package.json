@@ -1,0 +1,10 @@
+{
+  "name": "@fraudshield/aml-service",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "@fraudshield/platform-auth": "file:../../packages/platform-auth",
+    "express": "^4.18.2"
+  }
+}
