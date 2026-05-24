@@ -193,7 +193,11 @@ export function verifyTotpCode(secret, code) {
 function generateTotp(secret, counter) {
   const key = Buffer.from(secret.replace(/\s/g, '').toUpperCase(), 'utf8');
   const buf = Buffer.alloc(8);
-  buf.writeBigInt64BE(BigInt(counter));
+  let value = counter;
+  for (let i = 7; i >= 0; i -= 1) {
+    buf[i] = value & 0xff;
+    value = Math.floor(value / 256);
+  }
   const hmac = crypto.createHmac('sha1', key).update(buf).digest();
   const offset = hmac[hmac.length - 1] & 0xf;
   const code =
