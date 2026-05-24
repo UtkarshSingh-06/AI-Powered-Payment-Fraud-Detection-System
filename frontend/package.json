@@ -21,6 +21,12 @@
     "recharts": "^2.10.3",
     "three": "^0.160.1"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.60.1",
+    "@rollup/rollup-win32-x64-msvc": "^4.60.1",
+    "@rollup/rollup-darwin-x64": "^4.60.1",
+    "@rollup/rollup-darwin-arm64": "^4.60.1"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^18.2.43",

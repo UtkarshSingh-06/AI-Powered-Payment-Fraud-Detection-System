@@ -33,6 +33,10 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      - name: Install Rollup native bindings (npm optional-deps workaround)
+        run: |
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+            -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm test --workspace=fraudshield-ai-backend
         env:
           NODE_ENV: test
@@ -62,6 +66,10 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      - name: Install Rollup native bindings (npm optional-deps workaround)
+        run: |
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+            -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm run build --workspace=fraudshield-ai-frontend
 
   nextjs-build:
@@ -117,6 +125,10 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      - name: Install Rollup native bindings (npm optional-deps workaround)
+        run: |
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+            -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm run build --workspace=fraudshield-ai-frontend
       - run: npm install
         working-directory: tests/e2e
