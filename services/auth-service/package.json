@@ -7,6 +7,6 @@
     "express": "^4.18.2",
     "http-proxy-middleware": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "otplib": "^12.0.1"
   }
 }
