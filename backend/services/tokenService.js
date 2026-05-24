@@ -184,7 +184,7 @@ export function verifyTotpCode(secret, code) {
         return true;
       }
     }
-  } catch {
+  } catch (_err) {
     return false;
   }
   return false;
@@ -201,5 +201,5 @@ function generateTotp(secret, counter) {
     ((hmac[offset + 1] & 0xff) << 16) |
     ((hmac[offset + 2] & 0xff) << 8) |
     (hmac[offset + 3] & 0xff);
-  return String(code % 1_000_000).padStart(6, '0');
+  return String(code % 1000000).padStart(6, '0');
 }
