@@ -54,3 +54,26 @@ CREATE TABLE IF NOT EXISTS transaction_ingest_log (
 );
 
 CREATE INDEX IF NOT EXISTS idx_transaction_ingest_correlation ON transaction_ingest_log(correlation_id);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+  key_id TEXT PRIMARY KEY,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS alerts (
+  alert_id TEXT PRIMARY KEY,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE fraud_cases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fraud_decisions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS tenant_isolation_cases ON fraud_cases;
+CREATE POLICY tenant_isolation_cases ON fraud_cases
+  USING (tenant_id = current_setting('app.tenant_id', true));
+
+DROP POLICY IF EXISTS tenant_isolation_decisions ON fraud_decisions;
+CREATE POLICY tenant_isolation_decisions ON fraud_decisions
+  USING (tenant_id = current_setting('app.tenant_id', true));
