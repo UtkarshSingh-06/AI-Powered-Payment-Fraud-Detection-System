@@ -1,0 +1,31 @@
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alert-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.alert-score {
+  font-weight: 700;
+  color: var(--fs-accent, #4ade80);
+}
+
+.alert-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--fs-accent);
+  text-decoration: none;
+}
+
+.alert-link:hover {
+  text-decoration: underline;
+}
+
+.alerts-empty {
+  color: var(--fs-text-muted);
+}
