@@ -16,6 +16,7 @@ async function createSampleUsers() {
       password: await bcrypt.hash('admin123', 10),
       name: 'Admin User',
       role: 'admin',
+      tenantId: 'default',
       createdAt: new Date().toISOString()
     },
     {
