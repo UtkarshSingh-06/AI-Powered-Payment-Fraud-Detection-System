@@ -1,0 +1,39 @@
+.txn-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.txn-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--fs-text-muted);
+  text-decoration: none;
+}
+
+.txn-facts,
+.graph-stats {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.txn-facts li,
+.graph-stats li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--fs-border, rgba(255, 255, 255, 0.08));
+  padding-bottom: 8px;
+}
+
+.txn-facts span,
+.graph-stats span {
+  color: var(--fs-text-muted);
+}
+
+.explain-sub {
+  color: var(--fs-text-muted);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
