@@ -2,10 +2,12 @@ import express from 'express';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { createServiceAuthMiddleware } from '@fraudshield/platform-auth';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5005;
+const requireAuth = createServiceAuthMiddleware();
 
 const policies = JSON.parse(
   readFileSync(join(__dirname, 'policies', 'default.json'), 'utf-8')
@@ -14,9 +16,9 @@ const policies = JSON.parse(
 app.use(express.json());
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'rules-engine' }));
 
-app.get('/policies', (_req, res) => res.json({ policies }));
+app.get('/policies', requireAuth, (_req, res) => res.json({ policies }));
 
-app.post('/evaluate', (req, res) => {
+app.post('/evaluate', requireAuth, (req, res) => {
   const { transaction = {}, modelOutput = {} } = req.body;
   const riskScore = modelOutput.riskScore ?? 0;
   const hits = [];
