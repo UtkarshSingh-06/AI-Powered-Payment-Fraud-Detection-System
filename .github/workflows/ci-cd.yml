@@ -87,6 +87,49 @@ jobs:
         run: docker build -t fraudshield/api-gateway:latest ./apps/api-gateway
       - name: Build inference image
         run: docker build -t fraudshield/inference:latest ./services/inference-fastapi
+      - name: Train model artifact
+        run: |
+          pip install numpy pandas scikit-learn xgboost joblib
+          python ml/training/train.py
+      - name: Push to registry (when configured)
+        if: ${{ secrets.ECR_REGISTRY != '' }}
+        run: |
+          echo "${{ secrets.ECR_PASSWORD }}" | docker login -u "${{ secrets.ECR_USERNAME }}" --password-stdin "${{ secrets.ECR_REGISTRY }}"
+          docker tag fraudshield/backend:latest ${{ secrets.ECR_REGISTRY }}/fraudshield/backend:${{ github.sha }}
+          docker push ${{ secrets.ECR_REGISTRY }}/fraudshield/backend:${{ github.sha }}
+
+  e2e-smoke:
+    runs-on: ubuntu-latest
+    needs: frontend-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install && npm run build
+        working-directory: frontend
+      - run: npm install && npx playwright install chromium
+        working-directory: tests/e2e
+      - name: Run smoke tests
+        working-directory: tests/e2e
+        run: |
+          cd ../../frontend && npm run preview -- --host 127.0.0.1 --port 4173 &
+          sleep 5
+          npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4173
+
+  load-test:
+    runs-on: ubuntu-latest
+    needs: integration-compose
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/load/k6-score.js
+        env:
+          API_URL: http://localhost:5000
 
   integration-compose:
     runs-on: ubuntu-latest
