@@ -29,6 +29,8 @@ function LoginAside() {
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [totpCode, setTotpCode] = useState('');
+  const [mfaRequired, setMfaRequired] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -40,10 +42,13 @@ function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, mfaRequired ? totpCode : undefined);
       navigate('/app/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      if (err.mfaRequired || err.response?.data?.mfaRequired) {
+        setMfaRequired(true);
+      }
+      setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -92,11 +97,31 @@ function Login() {
                 placeholder="••••••••"
                 autoComplete="current-password"
               />
-              <button type="button" className="fs-password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">
+              <button
+                type="button"
+                className="fs-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Toggle password"
+              >
                 <Eye size={18} />
               </button>
             </div>
           </div>
+
+          {mfaRequired && (
+            <div className="fs-field">
+              <label>MFA code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={totpCode}
+                onChange={(e) => setTotpCode(e.target.value)}
+                placeholder="6-digit code"
+                required
+              />
+              <p className="fs-auth-card-sub">Demo: use 000000 when MFA_DEV_BYPASS is enabled</p>
+            </div>
+          )}
 
           <button type="submit" className="fs-btn-pill fs-btn-pill--white fs-btn-pill--full" disabled={loading}>
             {loading ? 'Signing in…' : (
