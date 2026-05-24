@@ -1,0 +1,44 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    - cron: '0 3 * * 1'
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images for scan
+        run: |
+          docker build -t fraudshield/backend:scan ./backend
+          docker build -t fraudshield/inference:scan ./services/inference-fastapi
+      - name: Trivy backend
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: fraudshield/backend:scan
+          format: sarif
+          output: trivy-backend.sarif
+          severity: CRITICAL,HIGH
+      - name: Trivy inference
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: fraudshield/inference:scan
+          format: sarif
+          output: trivy-inference.sarif
+          severity: CRITICAL,HIGH
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+      - uses: github/codeql-action/analyze@v3
