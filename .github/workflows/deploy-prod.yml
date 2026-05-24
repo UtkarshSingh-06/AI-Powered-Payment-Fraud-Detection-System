@@ -1,0 +1,40 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Container image tag
+        required: true
+        default: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+      - name: Push images
+        run: |
+          TAG=${{ github.event.inputs.image_tag }}
+          REG=${{ secrets.ECR_REGISTRY }}
+          docker build -t $REG/fraudshield/backend:$TAG ./backend
+          docker build -t $REG/fraudshield/inference:$TAG ./services/inference-fastapi
+          docker build -t $REG/fraudshield/api-gateway:$TAG ./apps/api-gateway
+          docker push $REG/fraudshield/backend:$TAG
+          docker push $REG/fraudshield/inference:$TAG
+          docker push $REG/fraudshield/api-gateway:$TAG
+      - name: Helm deploy to EKS
+        run: |
+          echo "Configure KUBECONFIG secret for cluster access"
+          helm upgrade --install fraudshield infra/k8s/helm/fraudshield \
+            --set image.tag=${{ github.event.inputs.image_tag }} \
+            --namespace fraudshield --create-namespace
