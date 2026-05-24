@@ -20,6 +20,15 @@ import { runDeepHealthCheck } from './services/healthCheck.js';
 
 dotenv.config();
 
+if (process.env.NODE_ENV === 'test') {
+  delete process.env.DATABASE_URL;
+  delete process.env.KAFKA_BROKERS;
+  delete process.env.REDIS_URL;
+  delete process.env.RABBITMQ_URL;
+  process.env.INFERENCE_URL = '';
+  process.env.AML_SERVICE_URL = '';
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();

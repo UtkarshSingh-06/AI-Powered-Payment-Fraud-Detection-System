@@ -3,6 +3,10 @@ import { createClient } from 'redis';
 let redisClient;
 
 export async function getRedisClient() {
+  if (process.env.NODE_ENV === 'test') {
+    return null;
+  }
+
   if (redisClient) {
     return redisClient;
   }

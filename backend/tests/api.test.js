@@ -16,12 +16,24 @@ const adminPayload = {
   role: 'admin'
 };
 
-async function registerAndLogin(payload) {
+async function registerAndLogin(payload, { asAdmin = false } = {}) {
   await request(app).post('/api/auth/register').send(payload);
-  const loginRes = await request(app).post('/api/auth/login').send({
+  const loginBody = {
     email: payload.email,
-    password: payload.password
-  });
+    password: payload.password,
+    ...(asAdmin ? { totpCode: '000000' } : {})
+  };
+  if (asAdmin) {
+    const users = await readData('users.json');
+    const user = users.find((u) => u.email === payload.email);
+    if (user) {
+      user.role = 'admin';
+      user.mfaSecret = 'test-mfa-secret';
+      user.mfaEnabled = true;
+      await writeData('users.json', users);
+    }
+  }
+  const loginRes = await request(app).post('/api/auth/login').send(loginBody);
   return loginRes.body.token;
 }
 
@@ -114,7 +126,7 @@ describe('FraudShield API smoke tests', () => {
 
   it('allows admin to label transaction and fetch labels', async () => {
     const userToken = await registerAndLogin(userPayload);
-    const adminToken = await registerAndLogin(adminPayload);
+    const adminToken = await registerAndLogin(adminPayload, { asAdmin: true });
 
     const createRes = await request(app)
       .post('/api/transactions')

@@ -5,7 +5,7 @@ const { Pool } = pg;
 let pool;
 
 export function getPostgresPool() {
-  if (!process.env.DATABASE_URL) {
+  if (process.env.NODE_ENV === 'test' || !process.env.DATABASE_URL) {
     return null;
   }
 

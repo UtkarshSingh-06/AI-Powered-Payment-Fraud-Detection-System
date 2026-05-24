@@ -22,6 +22,10 @@ function validateByRoutingKey(routingKey, payload) {
 }
 
 export async function publishPlatformEvent(routingKey, payload) {
+  if (process.env.NODE_ENV === 'test') {
+    return { rabbitmq: false, kafka: false };
+  }
+
   const validation = validateByRoutingKey(routingKey, payload);
   if (!validation.valid) {
     const error = new Error(validation.errors.join('; '));

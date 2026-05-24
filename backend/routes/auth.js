@@ -10,8 +10,8 @@ import {
   revokeRefreshTokens,
   validatePassword,
   requiresMfa,
-  verifyTotpCode
 } from '../services/tokenService.js';
+import { verifyTotpCode } from '../services/totpHelper.js';
 
 const router = express.Router();
 

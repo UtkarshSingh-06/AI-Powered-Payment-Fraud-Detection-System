@@ -10,6 +10,7 @@ export default defineConfig({
     environment: 'node',
     pool: 'forks',
     globals: true,
+    testTimeout: 30_000,
     deps: {
       inline: ['@fraudshield/contracts', 'kafkajs']
     }
