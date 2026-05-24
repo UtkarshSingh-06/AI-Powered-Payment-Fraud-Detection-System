@@ -1,46 +1,65 @@
-import jwt from 'jsonwebtoken';
+import { verifyAccessToken } from '@fraudshield/platform-auth';
+import { extractAccessToken } from '../services/tokenService.js';
+import { readData } from '../config/database.js';
 
-function getJwtSecret() {
-  const value = process.env.JWT_SECRET;
-  if (!value) {
-    throw new Error('JWT_SECRET environment variable is required. Please set it in your .env file.');
-  }
-  return value;
-}
-
-// Verify JWT token
-export function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+export async function authenticateToken(req, res, next) {
+  const token = extractAccessToken(req);
 
   if (!token) {
     return res.status(401).json({ message: 'Access token required' });
   }
 
-  jwt.verify(token, getJwtSecret(), (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
-    }
-    req.user = user;
-    next();
-  });
+  const user = verifyAccessToken(token);
+  if (!user) {
+    return res.status(403).json({ message: 'Invalid or expired token' });
+  }
+
+  if (user.type && user.type !== 'access' && user.authType !== 'api_key') {
+    return res.status(403).json({ message: 'Invalid token type' });
+  }
+
+  if (user.authType === 'api_key' && user.keyId) {
+    validateApiKeyRecord(user.keyId)
+      .then((valid) => {
+        if (!valid) return res.status(403).json({ message: 'API key revoked or invalid' });
+        req.user = user;
+        next();
+      })
+      .catch(() => res.status(500).json({ message: 'Auth validation failed' }));
+    return;
+  }
+
+  req.user = user;
+  next();
 }
 
-// Check if user is admin
+async function validateApiKeyRecord(keyId) {
+  const keys = await readData('apiKeys.json');
+  const record = keys.find((k) => k.keyId === keyId);
+  return Boolean(record && !record.revoked);
+}
+
 export function requireAdmin(req, res, next) {
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
     return res.status(403).json({ message: 'Admin access required' });
   }
   next();
 }
 
-// Check if user is admin or owns the resource
 export function requireAdminOrOwner(req, res, next) {
   const userId = req.params.userId || req.body.userId || req.query.userId;
-  
-  if (req.user.role === 'admin' || req.user.userId === userId) {
+
+  if (req.user.role === 'admin' || req.user.role === 'super_admin' || req.user.userId === userId) {
     return next();
   }
-  
+
   return res.status(403).json({ message: 'Access denied' });
+}
+
+export function requireAnalyst(req, res, next) {
+  const allowed = ['admin', 'super_admin', 'analyst'];
+  if (!allowed.includes(req.user.role)) {
+    return res.status(403).json({ message: 'Analyst access required' });
+  }
+  next();
 }
