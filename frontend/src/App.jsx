@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -9,13 +9,16 @@ import Analytics from './pages/Analytics';
 import Recommendations from './pages/Recommendations';
 import AdminPanel from './pages/AdminPanel';
 import LiveMonitoring from './pages/LiveMonitoring';
+import Cases from './pages/Cases';
+import Alerts from './pages/Alerts';
+import TransactionDetail from './pages/TransactionDetail';
 import Layout from './components/Layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="loading">
@@ -23,13 +26,13 @@ function PrivateRoute({ children }) {
       </div>
     );
   }
-  
+
   return user ? children : <Navigate to="/login" />;
 }
 
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="loading">
@@ -37,32 +40,38 @@ function AdminRoute({ children }) {
       </div>
     );
   }
-  
+
   if (!user) {
     return <Navigate to="/" />;
   }
-  
+
   if (user.role !== 'admin') {
     return <Navigate to="/app/dashboard" />;
   }
-  
+
+  return children;
+}
+
+function AnalystRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading"><span className="loading-text">Loading...</span></div>;
+  if (!user) return <Navigate to="/login" />;
+  if (!['admin', 'analyst', 'super_admin'].includes(user.role)) return <Navigate to="/app/dashboard" />;
   return children;
 }
 
 function AppRoutes() {
   const { user } = useAuth();
-  
+
   return (
     <Routes>
-      {/* Landing/Home Page - Show About page for non-authenticated users */}
-      <Route 
-        path="/" 
-        element={!user ? <About /> : <Navigate to="/app/dashboard" />} 
+      <Route
+        path="/"
+        element={!user ? <About /> : <Navigate to="/app/dashboard" />}
       />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/app/dashboard" />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/app/dashboard" />} />
-      {/* Protected Routes */}
       <Route
         path="/app"
         element={
@@ -74,8 +83,11 @@ function AppRoutes() {
         <Route index element={<Navigate to="/app/dashboard" />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="transactions" element={<Transactions />} />
+        <Route path="transactions/:id" element={<TransactionDetail />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="live-monitoring" element={<LiveMonitoring />} />
+        <Route path="cases" element={<AnalystRoute><Cases /></AnalystRoute>} />
+        <Route path="alerts" element={<AnalystRoute><Alerts /></AnalystRoute>} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route
           path="admin"
@@ -86,7 +98,6 @@ function AppRoutes() {
           }
         />
       </Route>
-      {/* Redirect old dashboard route */}
       <Route path="/dashboard" element={<Navigate to="/app/dashboard" />} />
       <Route path="/transactions" element={<Navigate to="/app/transactions" />} />
       <Route path="/analytics" element={<Navigate to="/app/analytics" />} />
