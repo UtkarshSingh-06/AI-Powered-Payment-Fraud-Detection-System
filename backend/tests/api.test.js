@@ -5,13 +5,13 @@ import { readData, writeData } from '../config/database.js';
 
 const userPayload = {
   email: 'minor.project.user@example.com',
-  password: 'password123',
+  password: 'Password12345',
   name: 'Minor Project User'
 };
 
 const adminPayload = {
   email: 'minor.project.admin@example.com',
-  password: 'password123',
+  password: 'Password12345',
   name: 'Minor Project Admin',
   role: 'admin'
 };

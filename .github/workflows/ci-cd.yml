@@ -33,14 +33,16 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Install Rollup native bindings (npm optional-deps workaround)
+      - name: Install native bindings for Linux CI
         run: |
-          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 lightningcss-linux-x64-gnu@1.30.2 \
             -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm test --workspace=fraudshield-ai-backend
         env:
           NODE_ENV: test
           JWT_SECRET: ci-test-jwt-secret-minimum-32-characters-long
+          DATABASE_URL: ''
+          MFA_DEV_BYPASS: 'true'
 
   inference-tests:
     runs-on: ubuntu-latest
@@ -66,9 +68,9 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Install Rollup native bindings (npm optional-deps workaround)
+      - name: Install native bindings for Linux CI
         run: |
-          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 lightningcss-linux-x64-gnu@1.30.2 \
             -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm run build --workspace=fraudshield-ai-frontend
 
@@ -125,9 +127,9 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Install Rollup native bindings (npm optional-deps workaround)
+      - name: Install native bindings for Linux CI
         run: |
-          npm install @rollup/rollup-linux-x64-gnu@4.60.1 \
+          npm install @rollup/rollup-linux-x64-gnu@4.60.1 lightningcss-linux-x64-gnu@1.30.2 \
             -w fraudshield-ai-backend -w fraudshield-ai-frontend
       - run: npm run build --workspace=fraudshield-ai-frontend
       - run: npm install
