@@ -1,0 +1,17 @@
+groups:
+  - name: fraudshield-slo
+    rules:
+      - alert: HighInferenceLatency
+        expr: histogram_quantile(0.95, sum(rate(inference_score_latency_seconds_bucket[5m])) by (le)) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Inference p95 latency above 100ms SLO
+      - alert: BackendDown
+        expr: up{job="fraudshield-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Backend metrics target is down
