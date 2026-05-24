@@ -64,13 +64,17 @@ export default function LiveMonitoring() {
     }
 
     function setupRealtime() {
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5000/ws';
+      const token = localStorage.getItem('token');
+      const baseWs = import.meta.env.VITE_WS_URL || 'ws://localhost:5000/ws';
+      const wsUrl = token ? `${baseWs}?token=${encodeURIComponent(token)}` : baseWs;
       const socket = new WebSocket(wsUrl);
 
       socket.onmessage = (event) => {
         try {
           const payload = JSON.parse(event.data);
-          if (payload.type === 'transaction_update' && payload.data) {
+          const isTxnEvent =
+            (payload.type === 'transaction_update' || payload.type === 'new_transaction') && payload.data;
+          if (isTxnEvent) {
             setTransactions((prev) => {
               const withoutCurrent = prev.filter((tx) => tx.transactionId !== payload.data.transactionId);
               const next = [payload.data, ...withoutCurrent]
