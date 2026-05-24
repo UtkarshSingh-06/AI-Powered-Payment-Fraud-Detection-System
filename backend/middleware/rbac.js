@@ -1,8 +1,9 @@
 const ROLE_PERMISSIONS = {
+  super_admin: ['*'],
   admin: ['*'],
-  analyst: ['transactions:read', 'cases:read', 'cases:write', 'audit:read'],
-  user: ['transactions:read', 'transactions:write'],
-  api_client: ['transactions:write', 'ingest:write']
+  analyst: ['transactions:read', 'cases:read', 'cases:write', 'audit:read', 'apikeys:read'],
+  user: ['transactions:read', 'transactions:write', 'billing:write', 'apikeys:read', 'apikeys:write'],
+  api_client: ['transactions:write', 'ingest:write', 'billing:write', 'score:read']
 };
 
 export function requirePermission(permission) {
