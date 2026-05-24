@@ -11,7 +11,9 @@ import {
   Radio,
   LogOut,
   Menu,
-  X
+  X,
+  FolderOpen,
+  Bell
 } from 'lucide-react';
 import './Layout.css';
 
@@ -46,7 +48,14 @@ function Layout() {
     { to: '/app/recommendations', icon: Lightbulb, label: 'Recommendations' },
   ];
 
-  if (user?.role === 'admin') {
+  if (user?.role === 'admin' || user?.role === 'analyst' || user?.role === 'super_admin') {
+    navItems.push(
+      { to: '/app/cases', icon: FolderOpen, label: 'Cases' },
+      { to: '/app/alerts', icon: Bell, label: 'Alerts' }
+    );
+  }
+
+  if (user?.role === 'admin' || user?.role === 'super_admin') {
     navItems.push({ to: '/app/admin', icon: Shield, label: 'Admin Panel' });
   }
 
