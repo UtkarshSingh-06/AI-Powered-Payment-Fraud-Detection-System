@@ -1,12 +1,15 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Depends
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
+import os
 import time
 
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 from .scoring import score_hybrid
 from .graph import graph_risk_score
+from .xai import compute_shap_explanations
+from .auth import require_internal_auth
 
 
 class ScoreRequest(BaseModel):
@@ -30,10 +33,18 @@ class GraphRequest(BaseModel):
     historicalEdges: List[Dict[str, str]] = Field(default_factory=list)
 
 
-app = FastAPI(title="FraudShield Inference Service", version="2.0.0")
+app = FastAPI(title="FraudShield Inference Service", version="2.1.0")
 
 SCORE_REQUESTS = Counter("inference_score_requests_total", "Total score requests")
 SCORE_LATENCY = Histogram("inference_score_latency_seconds", "Score endpoint latency")
+
+
+def _model_ready() -> bool:
+    paths = [
+        os.getenv("MODEL_ARTIFACT_PATH"),
+        "/app/models/xgboost-fraud.joblib",
+    ]
+    return any(p and os.path.isfile(p) for p in paths)
 
 
 @app.get("/metrics")
@@ -43,11 +54,11 @@ def metrics():
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "modelLoaded": _model_ready()}
 
 
 @app.post("/score")
-def score(request: ScoreRequest):
+def score(request: ScoreRequest, _auth=Depends(require_internal_auth)):
     SCORE_REQUESTS.inc()
     start = time.perf_counter()
     with SCORE_LATENCY.time():
@@ -58,17 +69,28 @@ def score(request: ScoreRequest):
 
 
 @app.post("/explain")
-def explain(request: ScoreRequest):
-    result = score_hybrid(request.model_dump())
+def explain(request: ScoreRequest, _auth=Depends(require_internal_auth)):
+    payload = request.model_dump()
+    result = score_hybrid(payload)
+    shap = compute_shap_explanations(payload)
+    graph = graph_risk_score({
+        "transactionId": payload["transactionId"],
+        "userId": payload["userId"],
+        "deviceId": payload["deviceId"],
+        "merchantName": payload.get("merchantCategory", "unknown"),
+        "historicalEdges": []
+    })
     return {
         "transactionId": result["transactionId"],
-        "method": ["shap", "lime"],
-        "shap": result.get("explanations", []),
-        "lime": result.get("explanations", [])[:2],
-        "modelVersion": result.get("modelVersion")
+        "explanations": shap,
+        "shap": shap,
+        "lime": shap[:3],
+        "graphRisk": graph,
+        "modelVersion": result.get("modelVersion"),
+        "confidence": result.get("confidence")
     }
 
 
 @app.post("/graph/risk")
-def graph_risk(request: GraphRequest):
+def graph_risk(request: GraphRequest, _auth=Depends(require_internal_auth)):
     return graph_risk_score(request.model_dump())
