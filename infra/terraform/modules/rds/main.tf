@@ -1,6 +1,10 @@
 variable "name" { type = string }
 variable "vpc_id" { type = string }
 variable "subnet_ids" { type = list(string) }
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
 
 resource "aws_db_subnet_group" "this" {
   name       = "${var.name}-db-subnets"
@@ -8,17 +12,21 @@ resource "aws_db_subnet_group" "this" {
 }
 
 resource "aws_db_instance" "this" {
-  identifier             = "${var.name}-postgres"
-  engine                 = "postgres"
-  engine_version         = "16"
-  instance_class         = "db.t3.medium"
-  allocated_storage      = 50
-  username               = "postgres"
-  password               = "change-me-in-secrets-manager"
-  db_subnet_group_name   = aws_db_subnet_group.this.name
-  skip_final_snapshot    = true
-  storage_encrypted      = true
-  publicly_accessible    = false
+  identifier                  = "${var.name}-postgres"
+  engine                      = "postgres"
+  engine_version              = "16"
+  instance_class              = "db.t3.medium"
+  allocated_storage           = 50
+  username                    = "postgres"
+  password                    = var.db_password
+  db_subnet_group_name        = aws_db_subnet_group.this.name
+  skip_final_snapshot         = false
+  final_snapshot_identifier   = "${var.name}-postgres-final"
+  backup_retention_period     = 7
+  multi_az                    = true
+  storage_encrypted           = true
+  publicly_accessible         = false
+  deletion_protection         = true
 }
 
 output "endpoint" { value = aws_db_instance.this.endpoint }
