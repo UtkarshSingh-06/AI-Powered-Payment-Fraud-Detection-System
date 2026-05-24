@@ -22,7 +22,6 @@
     "three": "^0.160.1"
   },
   "devDependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.55.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
