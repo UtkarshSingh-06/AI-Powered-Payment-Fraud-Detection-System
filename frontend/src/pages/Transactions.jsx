@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { Plus } from 'lucide-react';
 import './Transactions.css';
@@ -288,9 +289,11 @@ function Transactions() {
                 transactions.map((transaction) => (
                   <tr key={transaction.transactionId}>
                     <td>
-                      <code className="transaction-id">
-                        {transaction.transactionId.substring(0, 12)}...
-                      </code>
+                      <Link to={`/app/transactions/${transaction.transactionId}`} className="transaction-id-link">
+                        <code className="transaction-id">
+                          {transaction.transactionId.substring(0, 12)}...
+                        </code>
+                      </Link>
                     </td>
                     <td>{transaction.merchantName}</td>
                     <td>{transaction.merchantCategory}</td>
