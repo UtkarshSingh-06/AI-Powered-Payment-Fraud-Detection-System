@@ -1,35 +1,35 @@
+"""Invoke real ML training pipeline and emit model metadata."""
 import json
-from datetime import datetime
-from pathlib import Path
+import os
+import subprocess
+import sys
+from datetime import datetime, timezone
 
-
-def build_model_metadata():
-    ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    return {
-        "modelVersionId": f"ensemble-{ts}",
-        "createdAt": datetime.utcnow().isoformat(),
-        "models": [
-            "logistic_regression",
-            "random_forest",
-            "xgboost",
-            "isolation_forest",
-            "autoencoder_proxy",
-        ],
-        "status": "candidate",
-        "metrics": {
-            "roc_auc": 0.94,
-            "precision_at_5pct": 0.82,
-            "recall_at_5pct": 0.71,
-        },
-    }
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+TRAIN_SCRIPT = os.path.join(ROOT, "ml", "training", "train.py")
+ARTIFACT = os.path.join(ROOT, "ml", "training", "artifacts", "model-version.json")
 
 
 def main():
-    output_dir = Path("artifacts")
-    output_dir.mkdir(parents=True, exist_ok=True)
-    metadata = build_model_metadata()
-    (output_dir / "model-version.json").write_text(json.dumps(metadata, indent=2))
-    print(f"Wrote model version artifact: {metadata['modelVersionId']}")
+    if not os.path.isfile(TRAIN_SCRIPT):
+        raise FileNotFoundError(TRAIN_SCRIPT)
+
+    subprocess.check_call([sys.executable, TRAIN_SCRIPT], cwd=os.path.dirname(TRAIN_SCRIPT))
+
+    if os.path.isfile(ARTIFACT):
+        with open(ARTIFACT, encoding="utf-8") as handle:
+            meta = json.load(handle)
+    else:
+        meta = {
+            "modelVersion": f"ensemble-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}",
+            "status": "failed"
+        }
+
+    out_path = os.path.join(os.path.dirname(__file__), "model-version.json")
+    with open(out_path, "w", encoding="utf-8") as handle:
+        json.dump(meta, handle, indent=2)
+
+    print(json.dumps(meta, indent=2))
 
 
 if __name__ == "__main__":
