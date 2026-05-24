@@ -5,6 +5,7 @@
   "scripts": { "start": "node server.js" },
   "dependencies": {
     "@fraudshield/contracts": "file:../../packages/contracts",
+    "@fraudshield/platform-auth": "file:../../packages/platform-auth",
     "express": "^4.18.2"
   }
 }
