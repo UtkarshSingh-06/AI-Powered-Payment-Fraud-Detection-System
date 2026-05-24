@@ -58,18 +58,20 @@ services:
 
   inference:
     build:
-      context: ./services/inference-fastapi
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/inference-fastapi/Dockerfile
     container_name: fraudshield-inference
     ports:
       - "8000:8000"
+    environment:
+      - MODEL_ARTIFACT_PATH=/app/models/xgboost-fraud.joblib
     networks:
       - fraudshield-network
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: fraudshield-backend
     ports:
       - "5000:5000"
@@ -87,6 +89,11 @@ services:
       - KAFKA_TOPIC_fraud.decisions=fraud.decisions
       - KAFKA_TOPIC_fraud.labels=fraud.labels
       - INFERENCE_URL=http://inference:8000
+      - AML_SERVICE_URL=http://aml-service:5007
+      - CASE_SERVICE_URL=http://case-service:5004
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - WS_REQUIRE_AUTH=true
+      - KAFKA_DLQ_TOPIC=platform.dlq
     env_file:
       - ./backend/.env
     depends_on:
@@ -107,19 +114,24 @@ services:
 
   api-gateway:
     build:
-      context: ./apps/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
     container_name: fraudshield-api-gateway
     ports:
       - "8080:8080"
     environment:
       - PORT=8080
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - BACKEND_URL=http://backend:5000
       - AUTH_SERVICE_URL=http://auth-service:5001
       - INGESTION_SERVICE_URL=http://ingestion-service:5002
       - SCORING_SERVICE_URL=http://scoring-service:5003
       - CASE_SERVICE_URL=http://case-service:5004
       - RULES_ENGINE_URL=http://rules-engine:5005
+      - NOTIFICATION_SERVICE_URL=http://notification-service:5006
+      - AML_SERVICE_URL=http://aml-service:5007
+      - SANDBOX_SERVICE_URL=http://sandbox-simulator:5008
     depends_on:
       - backend
       - auth-service
@@ -127,6 +139,8 @@ services:
       - scoring-service
       - case-service
       - rules-engine
+      - notification-service
+      - aml-service
     networks:
       - fraudshield-network
 
@@ -144,13 +158,15 @@ services:
 
   ingestion-service:
     build:
-      context: ./services/ingestion-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/ingestion-service/Dockerfile
     container_name: fraudshield-ingestion-service
     environment:
       - PORT=5002
       - BACKEND_URL=http://backend:5000
       - KAFKA_BROKERS=redpanda:9092
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
     depends_on:
       - redpanda
       - backend
@@ -159,13 +175,15 @@ services:
 
   scoring-service:
     build:
-      context: ./services/scoring-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/scoring-service/Dockerfile
     container_name: fraudshield-scoring-service
     environment:
       - PORT=5003
       - INFERENCE_URL=http://inference:8000
       - RULES_ENGINE_URL=http://rules-engine:5005
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
     depends_on:
       - inference
       - rules-engine
@@ -174,13 +192,15 @@ services:
 
   case-service:
     build:
-      context: ./services/case-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/case-service/Dockerfile
     container_name: fraudshield-case-service
     environment:
       - PORT=5004
       - BACKEND_URL=http://backend:5000
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fraudshield
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
     depends_on:
       - postgres
       - backend
@@ -189,25 +209,62 @@ services:
 
   rules-engine:
     build:
-      context: ./services/rules-engine
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/rules-engine/Dockerfile
     container_name: fraudshield-rules-engine
     environment:
       - PORT=5005
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
     networks:
       - fraudshield-network
 
   notification-service:
     build:
-      context: ./services/notification-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/notification-service/Dockerfile
     container_name: fraudshield-notification-service
     environment:
       - PORT=5006
       - KAFKA_BROKERS=redpanda:9092
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
     depends_on:
       - redpanda
+    networks:
+      - fraudshield-network
+
+  aml-service:
+    build:
+      context: .
+      dockerfile: services/aml-service/Dockerfile
+    container_name: fraudshield-aml-service
+    environment:
+      - PORT=5007
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - AML_VENDOR_URL=${AML_VENDOR_URL:-}
+    networks:
+      - fraudshield-network
+
+  sandbox-simulator:
+    build:
+      context: .
+      dockerfile: services/sandbox-simulator/Dockerfile
+    container_name: fraudshield-sandbox-simulator
+    environment:
+      - PORT=5008
+      - BACKEND_URL=http://backend:5000
+      - INGESTION_URL=http://ingestion-service:5002
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+    depends_on:
+      - ingestion-service
+      - backend
     networks:
       - fraudshield-network
 
@@ -220,7 +277,7 @@ services:
         - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:5000/ws}
     container_name: fraudshield-frontend
     ports:
-      - "3000:80"
+      - "3002:80"
     depends_on:
       - api-gateway
     restart: unless-stopped
@@ -250,8 +307,32 @@ services:
     container_name: fraudshield-prometheus
     volumes:
       - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./infra/monitoring/alert-rules.yml:/etc/prometheus/alert-rules.yml
     ports:
       - "9090:9090"
+    networks:
+      - fraudshield-network
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: fraudshield-alertmanager
+    volumes:
+      - ./infra/monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - fraudshield-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.111.0
+    container_name: fraudshield-otel
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./infra/otel/collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
     networks:
       - fraudshield-network
 
@@ -262,6 +343,9 @@ services:
       - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./infra/monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
     networks:
