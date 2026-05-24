@@ -1,0 +1,43 @@
+.cases-page .cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.case-card-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.case-status {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fs-accent, #4ade80);
+}
+
+.case-priority {
+  font-size: 0.75rem;
+  color: var(--fs-text-muted, rgba(255, 255, 255, 0.5));
+}
+
+.case-meta {
+  color: var(--fs-text-muted);
+  font-size: 0.85rem;
+  margin: 8px 0 16px;
+}
+
+.case-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cases-error {
+  color: #fca5a5;
+  margin-bottom: 16px;
+}
+
+.cases-empty {
+  color: var(--fs-text-muted);
+}
