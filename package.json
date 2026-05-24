@@ -8,12 +8,15 @@
     "frontend",
     "apps/*",
     "packages/*",
+    "packages/feature-schema",
     "services/auth-service",
     "services/ingestion-service",
     "services/scoring-service",
     "services/case-service",
     "services/rules-engine",
-    "services/notification-service"
+    "services/notification-service",
+    "services/aml-service",
+    "services/sandbox-simulator"
   ],
   "scripts": {
     "build": "turbo run build",
