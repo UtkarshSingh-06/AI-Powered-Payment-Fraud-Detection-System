@@ -16,41 +16,46 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.get('/auth/me')
-        .then(response => {
-          setUser(response.data);
-        })
-        .catch(() => {
-          localStorage.removeItem('token');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    api
+      .get('/auth/me')
+      .then((response) => setUser(response.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
-  const login = async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    setUser(user);
-    return { user, token };
+  const login = async (email, password, totpCode) => {
+    try {
+      const response = await api.post('/auth/login', { email, password, totpCode });
+      const { token, user: loggedInUser } = response.data;
+      if (token) localStorage.setItem('token', token);
+      setUser(loggedInUser);
+      return { user: loggedInUser, token };
+    } catch (error) {
+      if (error.response?.data?.mfaRequired) {
+        const err = new Error(error.response.data.message || 'MFA required');
+        err.mfaRequired = true;
+        err.mfaSecret = error.response.data.mfaSecret;
+        err.enroll = error.response.data.enroll;
+        throw err;
+      }
+      throw error;
+    }
   };
 
   const register = async (email, password, name) => {
     const response = await api.post('/auth/register', { email, password, name });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    setUser(user);
-    return { user, token };
+    const { token, user: newUser } = response.data;
+    if (token) localStorage.setItem('token', token);
+    setUser(newUser);
+    return { user: newUser, token };
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // ignore
+    }
     localStorage.removeItem('token');
     setUser(null);
   };
