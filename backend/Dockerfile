@@ -1,27 +1,22 @@
-# Backend Dockerfile
 FROM node:20-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY packages/contracts ./packages/contracts
+COPY packages/platform-kafka ./packages/platform-kafka
+COPY packages/platform-auth ./packages/platform-auth
+COPY packages/feature-schema ./packages/feature-schema
+COPY backend/package*.json ./
+RUN sed -i 's|file:../packages|file:./packages|g' package.json
+RUN npm install --omit=dev
 
-# Install dependencies
-RUN npm ci --only=production
+COPY backend/ .
 
-# Copy application code
-COPY . .
-
-# Create data directory
 RUN mkdir -p data
 
-# Expose port
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:5000/api/health || exit 1
 
-# Start server
 CMD ["node", "server.js"]
