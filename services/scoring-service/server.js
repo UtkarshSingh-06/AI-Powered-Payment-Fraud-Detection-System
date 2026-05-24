@@ -1,15 +1,17 @@
 import express from 'express';
 import { validateScoringRequest, validateScoringResponse } from '@fraudshield/contracts';
+import { createServiceAuthMiddleware } from '@fraudshield/platform-auth';
 
 const app = express();
 const PORT = process.env.PORT || 5003;
 const INFERENCE_URL = process.env.INFERENCE_URL || 'http://localhost:8000';
 const RULES_ENGINE_URL = process.env.RULES_ENGINE_URL || 'http://localhost:5005';
+const requireAuth = createServiceAuthMiddleware();
 
 app.use(express.json());
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'scoring-service' }));
 
-app.post('/score', async (req, res) => {
+app.post('/score', requireAuth, async (req, res) => {
   const validation = validateScoringRequest(req.body);
   if (!validation.valid) {
     return res.status(400).json({ errors: validation.errors });
@@ -31,7 +33,10 @@ app.post('/score', async (req, res) => {
 
   const rulesResponse = await fetch(`${RULES_ENGINE_URL}/evaluate`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-gateway-auth': process.env.GATEWAY_INTERNAL_SECRET || process.env.JWT_SECRET || ''
+    },
     body: JSON.stringify({ transaction: req.body, modelOutput: inferenceResult })
   });
   const rules = rulesResponse.ok ? await rulesResponse.json() : { decision: inferenceResult.decision, hits: [] };
