@@ -109,7 +109,12 @@ function Register() {
                 placeholder="Min. 6 characters"
                 autoComplete="new-password"
               />
-              <button type="button" className="fs-password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">
+              <button
+                type="button"
+                className="fs-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Toggle password"
+              >
                 <Eye size={18} />
               </button>
             </div>
