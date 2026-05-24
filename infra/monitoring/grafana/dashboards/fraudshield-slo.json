@@ -1,0 +1,31 @@
+{
+  "title": "FraudShield SLO",
+  "uid": "fraudshield-slo",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Backend health",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "targets": [{ "expr": "up{job=\"fraudshield-backend\"}" }]
+    },
+    {
+      "type": "graph",
+      "title": "Inference score latency p95",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(inference_score_latency_seconds_bucket[5m])) by (le))"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "HTTP request rate",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [{ "expr": "rate(process_cpu_user_seconds_total[1m])" }]
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}
