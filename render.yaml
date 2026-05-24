@@ -1,0 +1,73 @@
+# FraudShield — Render Blueprint
+# Deploy: connect repo at https://dashboard.render.com → New → Blueprint → select render.yaml
+
+databases:
+  - name: fraudshield-db
+    databaseName: fraudshield
+    user: fraudshield
+    plan: free
+
+services:
+  - type: web
+    name: fraudshield-inference
+    runtime: docker
+    dockerfilePath: ./services/inference-fastapi/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MODEL_ARTIFACT_PATH
+        value: /app/models/xgboost-fraud.joblib
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+  - type: web
+    name: fraudshield
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: RENDER
+        value: "true"
+      - key: SEED_ON_START
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fraudshield-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GATEWAY_INTERNAL_SECRET
+        generateValue: true
+      - key: FIELD_ENCRYPTION_KEY
+        generateValue: true
+      - key: DEFAULT_TENANT_ID
+        value: default
+      - key: MFA_DEV_BYPASS
+        value: "true"
+      - key: MFA_REQUIRED_ROLES
+        value: admin,super_admin,analyst
+      - key: WS_REQUIRE_AUTH
+        value: "true"
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAME_SITE
+        value: lax
+      - key: ACCESS_TOKEN_EXPIRES_IN
+        value: 15m
+      - key: REFRESH_TOKEN_EXPIRES_IN
+        value: 7d
+      - key: INFERENCE_URL
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
