@@ -3,10 +3,37 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './LiveMonitoring.css';
 
+function getWebSocketUrl(token) {
+  const configured = import.meta.env.VITE_WS_URL?.trim();
+  const base =
+    configured ||
+    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
+}
+
+function getFraudScore(tx) {
+  let status = tx?.fraudStatus;
+  if (typeof status === 'string') {
+    try {
+      status = JSON.parse(status);
+    } catch {
+      status = null;
+    }
+  }
+  const score = Number(status?.score);
+  return Number.isFinite(score) ? score : 0;
+}
+
 function formatRisk(score) {
-  if (score >= 70) return 'Fraudulent';
-  if (score >= 40) return 'Suspicious';
+  const n = Number(score);
+  if (!Number.isFinite(n)) return 'Safe';
+  if (n >= 70) return 'Fraudulent';
+  if (n >= 40) return 'Suspicious';
   return 'Safe';
+}
+
+function formatDecision(value) {
+  return String(value ?? 'allow').replace(/_/g, ' ');
 }
 
 export default function LiveMonitoring() {
@@ -17,7 +44,7 @@ export default function LiveMonitoring() {
   const [error, setError] = useState('');
   const [lastUpdatedAt, setLastUpdatedAt] = useState('');
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
 
   const updateTransactions = (items = []) => {
     const sorted = [...items].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -64,32 +91,38 @@ export default function LiveMonitoring() {
     }
 
     function setupRealtime() {
-      const token = localStorage.getItem('token');
-      const baseWs = import.meta.env.VITE_WS_URL || 'ws://localhost:5000/ws';
-      const wsUrl = token ? `${baseWs}?token=${encodeURIComponent(token)}` : baseWs;
-      const socket = new WebSocket(wsUrl);
+      try {
+        const token = localStorage.getItem('token');
+        const socket = new WebSocket(getWebSocketUrl(token));
 
-      socket.onmessage = (event) => {
-        try {
-          const payload = JSON.parse(event.data);
-          const isTxnEvent =
-            (payload.type === 'transaction_update' || payload.type === 'new_transaction') && payload.data;
-          if (isTxnEvent) {
-            setTransactions((prev) => {
-              const withoutCurrent = prev.filter((tx) => tx.transactionId !== payload.data.transactionId);
-              const next = [payload.data, ...withoutCurrent]
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 50);
-              return next;
-            });
-            setLastUpdatedAt(new Date().toISOString());
+        socket.onmessage = (event) => {
+          try {
+            const payload = JSON.parse(event.data);
+            const isTxnEvent =
+              (payload.type === 'transaction_update' || payload.type === 'new_transaction') && payload.data;
+            if (isTxnEvent) {
+              setTransactions((prev) => {
+                const withoutCurrent = prev.filter((tx) => tx.transactionId !== payload.data.transactionId);
+                const next = [payload.data, ...withoutCurrent]
+                  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                  .slice(0, 50);
+                return next;
+              });
+              setLastUpdatedAt(new Date().toISOString());
+            }
+          } catch {
+            // ignore malformed websocket payloads
           }
-        } catch {
-          // ignore malformed websocket payloads
-        }
-      };
+        };
 
-      return socket;
+        socket.onerror = () => {
+          // polling still refreshes data if websocket is unavailable
+        };
+
+        return socket;
+      } catch {
+        return null;
+      }
     }
 
     loadBaseData();
@@ -99,7 +132,9 @@ export default function LiveMonitoring() {
     return () => {
       isMounted = false;
       clearInterval(poller);
-      socket.close();
+      if (socket && socket.readyState !== WebSocket.CLOSED) {
+        socket.close();
+      }
     };
   }, [isAdmin]);
 
@@ -173,20 +208,22 @@ export default function LiveMonitoring() {
                 <tr><td colSpan={5}>No transactions found yet.</td></tr>
               )}
               {!loading && transactions.map((tx) => {
-                const riskBand = formatRisk(tx.fraudStatus?.score ?? 0);
+                const riskScore = getFraudScore(tx);
+                const riskBand = formatRisk(riskScore);
+                const statusKey = String(tx.status || 'pending').toLowerCase();
                 return (
                   <tr key={tx.transactionId}>
                     <td><span className="transaction-id">{tx.transactionId}</span></td>
                     <td>{tx.currency || 'INR'} {Number(tx.amount || 0).toFixed(2)}</td>
-                    <td>{tx.fraudStatus?.score ?? 0}</td>
+                    <td>{riskScore}</td>
                     <td>
                       <span className={`badge badge-${riskBand.toLowerCase()}`}>
                         {riskBand}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge badge-${tx.status || 'pending'}`}>
-                        {(tx.riskDecision || 'allow').replace('_', ' ')}
+                      <span className={`badge badge-${statusKey}`}>
+                        {formatDecision(tx.riskDecision)}
                       </span>
                     </td>
                   </tr>
