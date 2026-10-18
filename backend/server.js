@@ -40,10 +40,54 @@ const allowedOrigins = corsOriginEnv
   .map((s) => s.trim())
   .filter(Boolean);
 
-// Middleware
-app.use(helmet({
-  crossOriginResourcePolicy: process.env.SERVE_FRONTEND === 'true' ? { policy: 'cross-origin' } : undefined
-}));
+// Security headers (Helmet + hardened defaults)
+const serveFrontend = process.env.SERVE_FRONTEND === 'true';
+app.use(
+  helmet({
+    crossOriginResourcePolicy: serveFrontend ? { policy: 'cross-origin' } : undefined,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    frameguard: { action: 'deny' },
+    noSniff: true,
+    hsts:
+      process.env.NODE_ENV === 'production'
+        ? { maxAge: 31536000, includeSubDomains: true, preload: false }
+        : false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+        workerSrc: ["'self'", 'blob:'],
+        connectSrc: [
+          "'self'",
+          'https:',
+          'wss:',
+          'ws:',
+          ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:5000', 'ws://localhost:5000'] : [])
+        ],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
+      }
+    }
+  })
+);
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-DNS-Prefetch-Control', 'off');
+  res.setHeader('X-Download-Options', 'noopen');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'
+  );
+  next();
+});
 app.use(compression());
 app.use(cookieParser());
 
@@ -64,10 +108,25 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(structuredLogMiddleware);
+const rateLimitMax =
+  Number(process.env.RATE_LIMIT_PER_MINUTE) ||
+  (process.env.NODE_ENV === 'production' ? 120 : 1000);
+
 app.use(
   rateLimit({
     windowMs: 60 * 1000,
-    max: Number(process.env.RATE_LIMIT_PER_MINUTE || 120)
+    max: rateLimitMax,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => {
+      const path = req.path || '';
+      return (
+        path === '/api/health' ||
+        path === '/api/health/deep' ||
+        path === '/api/metrics' ||
+        path === '/health'
+      );
+    }
   })
 );
 
@@ -93,7 +152,9 @@ const [
   { default: complianceRoutes },
   { default: apiKeyRoutes },
   { default: alertsRoutes },
-  { default: casesRoutes }
+  { default: casesRoutes },
+  { default: scamshieldRoutes },
+  { default: contactRoutes }
 ] = await Promise.all([
   import('./routes/auth.js'),
   import('./routes/transactions.js'),
@@ -105,7 +166,9 @@ const [
   import('./routes/compliance.js'),
   import('./routes/apiKeys.js'),
   import('./routes/alerts.js'),
-  import('./routes/cases.js')
+  import('./routes/cases.js'),
+  import('./routes/scamshield.js'),
+  import('./routes/contact.js')
 ]);
 
 // API Routes — tenant context for all authenticated resources
@@ -121,6 +184,8 @@ app.use('/api/compliance', complianceRoutes);
 app.use('/api/api-keys', apiKeyRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/cases', casesRoutes);
+app.use('/api/scamshield', scamshieldRoutes);
+app.use('/api/contact', contactRoutes);
 
 if (process.env.SERVE_FRONTEND === 'true') {
   const publicDir = path.join(__dirname, 'public');
