@@ -1,0 +1,34 @@
+.fs-breadcrumbs {
+  margin-bottom: 16px;
+}
+
+.fs-breadcrumbs ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  font-size: 0.82rem;
+  color: var(--fs-text-muted, rgba(255, 255, 255, 0.5));
+}
+
+.fs-breadcrumbs a {
+  color: var(--fs-text-muted, rgba(255, 255, 255, 0.55));
+  text-decoration: none;
+}
+
+.fs-breadcrumbs a:hover {
+  color: var(--fs-accent, #4ade80);
+}
+
+.fs-breadcrumbs [aria-current='page'] {
+  color: var(--fs-text, #f4f4f5);
+}
+
+.fs-crumb-sep {
+  opacity: 0.45;
+  margin-right: 4px;
+  vertical-align: middle;
+}
