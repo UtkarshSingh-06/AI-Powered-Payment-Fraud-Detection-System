@@ -33,6 +33,13 @@ A comprehensive full-stack web application for detecting and preventing UPI paym
 - **Users**: View transactions, receive recommendations, see fraud warnings
 - **Admins**: Monitor all transactions, investigate fraud cases, override decisions
 
+### 🛡️ ScamShield Threat Intelligence
+- Ingest indicators from public feeds (URLhaus, OpenPhish community) with provenance
+- Normalize/dedupe URLs, domains, IPs, and hashes
+- Explainable confidence and deterministic relationship rules
+- Analyst UI at `/app/scamshield` (investigation only — no auto-block)
+- Details: [docs/architecture/SCAMSHIELD.md](docs/architecture/SCAMSHIELD.md)
+
 ### 🔐 Security Features
 - JWT-based authentication
 - Password hashing (bcrypt)
