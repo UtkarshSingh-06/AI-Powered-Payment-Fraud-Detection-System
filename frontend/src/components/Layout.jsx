@@ -13,8 +13,11 @@ import {
   Menu,
   X,
   FolderOpen,
-  Bell
+  Bell,
+  Radar
 } from 'lucide-react';
+import Breadcrumbs from './Breadcrumbs';
+import RelatedLinks from './RelatedLinks';
 import './Layout.css';
 
 function Layout() {
@@ -51,7 +54,8 @@ function Layout() {
   if (user?.role === 'admin' || user?.role === 'analyst' || user?.role === 'super_admin') {
     navItems.push(
       { to: '/app/cases', icon: FolderOpen, label: 'Cases' },
-      { to: '/app/alerts', icon: Bell, label: 'Alerts' }
+      { to: '/app/alerts', icon: Bell, label: 'Alerts' },
+      { to: '/app/scamshield', icon: Radar, label: 'ScamShield' }
     );
   }
 
@@ -129,7 +133,9 @@ function Layout() {
 
       <main className="main-content">
         <div className="fs-app-page">
+          <Breadcrumbs />
           <Outlet />
+          <RelatedLinks title="Explore related" />
         </div>
       </main>
     </div>
