@@ -30,6 +30,14 @@ docker compose up --build
 - `infra/terraform/aws` — AWS infrastructure
 - `infra/k8s/helm` — Kubernetes deployment
 
+## ScamShield (threat intelligence)
+
+Integrated analyst capability for public-feed indicators (URLhaus, OpenPhish community), append-preserving evidence, explainable confidence, and deterministic correlations. See [docs/architecture/SCAMSHIELD.md](docs/architecture/SCAMSHIELD.md).
+
+- API: `/api/scamshield/*` (analyst/admin)
+- UI: Vite app → `/app/scamshield` (production path via `Dockerfile.render`)
+- Env: `URLHAUS_AUTH_KEY`, `OPENPHISH_ENABLED` (see `backend/.env.example`)
+
 ## Tests
 
 ```bash
