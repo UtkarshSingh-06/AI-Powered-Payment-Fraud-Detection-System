@@ -42,3 +42,8 @@ Thumbs.db
 # Data files (keep structure, ignore actual data)
 backend/data/*.json
 !backend/data/.gitkeep
+
+.env.vercel
+
+__pycache__/
+*.py[cod]
