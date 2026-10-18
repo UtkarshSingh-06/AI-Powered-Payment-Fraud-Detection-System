@@ -396,6 +396,23 @@
   justify-content: center;
 }
 
+.landing-platform-mark {
+  margin-bottom: 12px;
+}
+
+.landing-platform-mark img {
+  display: block;
+  border-radius: 12px;
+}
+
+.landing-related-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  position: relative;
+  z-index: 2;
+}
+
 /* Footer */
 .landing-footer {
   position: relative;
