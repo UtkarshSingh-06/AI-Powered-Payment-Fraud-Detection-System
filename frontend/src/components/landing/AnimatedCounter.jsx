@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { prefersReducedMotion } from '../../utils/motion';
 
 export default function AnimatedCounter({ value, suffix = '', prefix = '', duration = 1800, inView }) {
   const [display, setDisplay] = useState(0);
@@ -7,6 +8,10 @@ export default function AnimatedCounter({ value, suffix = '', prefix = '', durat
 
   useEffect(() => {
     if (!inView) return undefined;
+    if (prefersReducedMotion()) {
+      setDisplay(parsed);
+      return undefined;
+    }
     let start = 0;
     const startTime = performance.now();
     const tick = (now) => {
