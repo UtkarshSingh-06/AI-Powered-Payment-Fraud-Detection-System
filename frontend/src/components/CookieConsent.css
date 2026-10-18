@@ -1,0 +1,35 @@
+.fs-cookie {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10040;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.fs-cookie-inner {
+  background: rgba(10, 14, 12, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.fs-cookie-inner p {
+  margin: 0 0 14px;
+  font-size: 0.9rem;
+  color: var(--fs-text-muted, rgba(255, 255, 255, 0.7));
+  line-height: 1.5;
+}
+
+.fs-cookie-inner a {
+  color: var(--fs-accent, #4ade80);
+}
+
+.fs-cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
