@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="FraudShield AI">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#030403"/>
+      <stop offset="100%" stop-color="#0a1a10"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="rgba(74,222,128,0.08)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="980" cy="120" r="220" fill="rgba(34,197,94,0.12)"/>
+  <path d="M180 180c40 20 80 24 100 24v90c0 70-45 110-100 130-55-20-100-60-100-130v-90c20 0 60-5 100-24z" fill="#4ade80"/>
+  <text x="340" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="72" font-weight="700" fill="#f4f4f5">FraudShield AI</text>
+  <text x="340" y="350" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="36" fill="rgba(255,255,255,0.72)">Real-time payment fraud detection</text>
+  <text x="340" y="410" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="28" fill="#4ade80">UPI · Cards · ScamShield intelligence</text>
+</svg>
