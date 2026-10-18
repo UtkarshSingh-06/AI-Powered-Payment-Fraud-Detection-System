@@ -16,11 +16,21 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return undefined;
+    }
     api
       .get('/auth/me')
       .then((response) => setUser(response.data))
-      .catch(() => setUser(null))
+      .catch(() => {
+        localStorage.removeItem('token');
+        setUser(null);
+      })
       .finally(() => setLoading(false));
+    return undefined;
   }, []);
 
   const login = async (email, password, totpCode) => {
