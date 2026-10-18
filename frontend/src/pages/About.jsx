@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, Menu, Shield, X } from 'lucide-react';
 import SceneFallback from '../components/landing/SceneFallback';
+import RelatedLinks from '../components/RelatedLinks';
+import OptimizedImage from '../components/OptimizedImage';
+import { prefersReducedMotion } from '../utils/motion';
+import { trackEvent } from '../utils/analytics';
 
 let HeroScene3D = null;
 function loadHeroScene() {
@@ -39,14 +43,21 @@ function About() {
   const [compareRef, compareInView] = useInViewOnce(0.12);
 
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth';
-    loadHeroScene()
-      .then(() => setShow3D(true))
-      .catch(() => setShow3D(false));
+    const reduce = prefersReducedMotion();
+    document.documentElement.style.scrollBehavior = reduce ? 'auto' : 'smooth';
+    if (reduce) {
+      setShow3D(false);
+    } else {
+      loadHeroScene()
+        .then(() => setShow3D(true))
+        .catch(() => setShow3D(false));
+    }
     return () => {
       document.documentElement.style.scrollBehavior = '';
     };
   }, []);
+
+  const motionTransition = prefersReducedMotion() ? { duration: 0 } : undefined;
 
   return (
     <div className="landing-page">
@@ -70,10 +81,20 @@ function About() {
             <a href="#compare" onClick={() => setMobileMenuOpen(false)}>Compare</a>
             <a href="#trust" onClick={() => setMobileMenuOpen(false)}>Trust</a>
             <a href="#platform" onClick={() => setMobileMenuOpen(false)}>Platform</a>
+            <Link to="/contact" className="landing-link-muted" onClick={() => setMobileMenuOpen(false)}>
+              Contact
+            </Link>
             <Link to="/login" className="landing-link-muted" onClick={() => setMobileMenuOpen(false)}>
               Sign in
             </Link>
-            <Link to="/register" className="landing-btn-pill" onClick={() => setMobileMenuOpen(false)}>
+            <Link
+              to="/register"
+              className="landing-btn-pill"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                trackEvent('cta_click', { cta: 'launch_app', surface: 'nav' });
+              }}
+            >
               Launch App
             </Link>
           </div>
@@ -112,7 +133,7 @@ function About() {
               className="landing-metric"
               initial={{ opacity: 0, y: 24 }}
               animate={metricsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
+              transition={motionTransition || { delay: i * 0.08, duration: 0.5 }}
             >
               <div className="landing-metric-value">
                 <AnimatedCounter
@@ -192,11 +213,21 @@ function About() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <OptimizedImage
+            src="/favicon-32x32.png"
+            webpSrc="/brand.webp"
+            alt="FraudShield shield mark"
+            width={64}
+            height={64}
+            className="landing-platform-mark"
+            eager
+          />
           <p className="landing-eyebrow">FraudShield assets</p>
           <h3>Live monitoring, cases, heatmaps &amp; ML explainability</h3>
           <p>
             Ensemble models (XGBoost, LSTM, GNN) with rules engine fallback — designed for banks,
-            fintechs, and UPI gateways at scale.
+            fintechs, and UPI gateways at scale. Analysts can also investigate open-web threats in{' '}
+            <Link to="/login">ScamShield</Link> after signing in.
           </p>
         </motion.div>
       </section>
@@ -218,10 +249,16 @@ function About() {
         </div>
       </section>
 
+      <section className="landing-related-wrap">
+        <RelatedLinks title="Explore FraudShield" />
+      </section>
+
       <footer className="landing-footer">
         <span>© {new Date().getFullYear()} FraudShield AI</span>
         <div className="landing-footer-links">
           <a href="#trust">Security</a>
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
           <Link to="/register">Get started</Link>
         </div>
       </footer>
