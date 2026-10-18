@@ -84,26 +84,31 @@ router.post('/login', async (req, res, next) => {
 
   const needsMfa = requiresMfa(user.role) || user.mfaEnabled;
     if (needsMfa) {
-      if (!user.mfaSecret && !totpCode) {
-        const secret = crypto.randomBytes(20).toString('hex');
-        user.mfaSecret = secret;
-        user.mfaEnabled = true;
-        await writeData('users.json', users);
-        return res.status(403).json({
-          message: 'MFA enrollment required',
-          mfaRequired: true,
-          enroll: true,
-          mfaSecret: secret,
-          hint: 'Use any TOTP app. Dev bypass: set MFA_DEV_BYPASS=true and code 000000'
-        });
-      }
-
       if (!totpCode) {
+        if (!user.mfaSecret) {
+          const secret = crypto.randomBytes(20).toString('hex');
+          user.mfaSecret = secret;
+          user.mfaEnabled = true;
+          await writeData('users.json', users);
+          return res.status(403).json({
+            message: 'MFA enrollment required',
+            mfaRequired: true,
+            enroll: true,
+            mfaSecret: secret,
+            hint: 'Use any TOTP app. Dev bypass: set MFA_DEV_BYPASS=true and code 000000'
+          });
+        }
         return res.status(403).json({ message: 'MFA code required', mfaRequired: true });
       }
 
       if (!verifyTotpCode(user.mfaSecret, totpCode)) {
         return res.status(401).json({ message: 'Invalid MFA code' });
+      }
+
+      if (!user.mfaSecret && process.env.MFA_DEV_BYPASS === 'true') {
+        user.mfaSecret = crypto.randomBytes(20).toString('hex');
+        user.mfaEnabled = true;
+        await writeData('users.json', users);
       }
     }
 
