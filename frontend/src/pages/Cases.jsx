@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
+import { SkeletonPage } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 import './Cases.css';
 
 export default function Cases() {
@@ -30,11 +32,7 @@ export default function Cases() {
   }
 
   if (loading) {
-    return (
-      <div className="cases-page">
-        <p>Loading cases…</p>
-      </div>
-    );
+    return <SkeletonPage title="Loading cases" rows={3} />;
   }
 
   return (
@@ -49,7 +47,12 @@ export default function Cases() {
 
       <div className="cases-grid">
         {cases.length === 0 ? (
-          <p className="cases-empty">No open cases. High-risk transactions create alerts for analysts.</p>
+          <EmptyState
+            title="No open cases"
+            description="High-risk transactions create alerts and cases for analysts."
+            actionLabel="View alerts"
+            actionTo="/app/alerts"
+          />
         ) : (
           cases.map((item) => {
             const payload = typeof item.payload === 'object' ? item.payload : {};
