@@ -1,10 +1,12 @@
 import crypto from 'crypto';
 
 export function verifyTotpCode(secret, totpInput) {
-  if (!secret || !totpInput) return false;
+  if (!totpInput) return false;
+  // Dev bypass must work even before MFA secret enrollment
   if (process.env.MFA_DEV_BYPASS === 'true' && String(totpInput) === '000000') {
     return true;
   }
+  if (!secret) return false;
 
   const epoch = Math.floor(Date.now() / 1000 / 30);
   const normalized = String(totpInput).padStart(6, '0');
