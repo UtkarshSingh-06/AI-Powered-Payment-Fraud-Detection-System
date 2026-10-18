@@ -1,0 +1,66 @@
+.fs-toast-viewport {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10050;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.fs-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(12, 18, 14, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--fs-text, #f4f4f5);
+  font-size: 0.9rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  animation: fs-toast-in 0.28s ease;
+}
+
+.fs-toast--success {
+  border-color: rgba(74, 222, 128, 0.45);
+}
+
+.fs-toast--error {
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+.fs-toast--info {
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.fs-toast-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+}
+
+@keyframes fs-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-toast {
+    animation: none;
+  }
+}
