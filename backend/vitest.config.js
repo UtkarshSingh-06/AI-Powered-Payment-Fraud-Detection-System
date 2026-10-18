@@ -9,6 +9,7 @@ export default defineConfig({
     setupFiles: ['tests/setup.js'],
     environment: 'node',
     pool: 'forks',
+    fileParallelism: false,
     globals: true,
     testTimeout: 30_000,
     deps: {
