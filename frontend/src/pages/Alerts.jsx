@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { SkeletonPage } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 import './Alerts.css';
 
 export default function Alerts() {
@@ -14,7 +16,7 @@ export default function Alerts() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="alerts-page"><p>Loading alerts…</p></div>;
+  if (loading) return <SkeletonPage title="Loading alerts" rows={3} />;
 
   return (
     <div className="alerts-page">
@@ -25,7 +27,12 @@ export default function Alerts() {
       </header>
       <div className="alerts-list">
         {alerts.length === 0 ? (
-          <p className="alerts-empty">No open alerts.</p>
+          <EmptyState
+            title="No open alerts"
+            description="High-risk transactions will land here for analyst review."
+            actionLabel="Open cases"
+            actionTo="/app/cases"
+          />
         ) : (
           alerts.map((alert) => (
             <article key={alert.alertId} className="fs-panel fs-panel--pad alert-card">
