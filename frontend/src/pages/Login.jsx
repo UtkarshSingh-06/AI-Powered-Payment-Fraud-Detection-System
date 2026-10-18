@@ -47,8 +47,13 @@ function Login() {
     } catch (err) {
       if (err.mfaRequired || err.response?.data?.mfaRequired) {
         setMfaRequired(true);
+        if (!totpCode) setTotpCode('000000');
+        setError('MFA required — enter your authenticator code (demo: 000000), then sign in again.');
+      } else if (err.response?.status === 429) {
+        setError('Too many requests. Wait a few seconds and try again.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
       }
-      setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
