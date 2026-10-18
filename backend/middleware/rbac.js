@@ -1,7 +1,16 @@
 const ROLE_PERMISSIONS = {
   super_admin: ['*'],
   admin: ['*'],
-  analyst: ['transactions:read', 'cases:read', 'cases:write', 'audit:read', 'apikeys:read'],
+  analyst: [
+    'transactions:read',
+    'cases:read',
+    'cases:write',
+    'audit:read',
+    'apikeys:read',
+    'scamshield:read',
+    'scamshield:write',
+    'scamshield:ingest'
+  ],
   user: ['transactions:read', 'transactions:write', 'billing:write', 'apikeys:read', 'apikeys:write'],
   api_client: ['transactions:write', 'ingest:write', 'billing:write', 'score:read']
 };
