@@ -1,0 +1,22 @@
+{
+  "name": "FraudShield AI",
+  "short_name": "FraudShield",
+  "description": "AI-powered payment fraud detection and ScamShield threat intelligence",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030403",
+  "theme_color": "#030403",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
