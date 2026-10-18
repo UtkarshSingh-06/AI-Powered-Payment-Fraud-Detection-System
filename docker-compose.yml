@@ -94,6 +94,11 @@ services:
       - GATEWAY_INTERNAL_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - WS_REQUIRE_AUTH=true
       - KAFKA_DLQ_TOPIC=platform.dlq
+      - URLHAUS_AUTH_KEY=${URLHAUS_AUTH_KEY:-}
+      - OPENPHISH_ENABLED=${OPENPHISH_ENABLED:-false}
+      - OPENPHISH_FEED_URL=${OPENPHISH_FEED_URL:-https://raw.githubusercontent.com/openphish/public_feed/main/feed.txt}
+      - SCAMSHIELD_FEED_MIN_INTERVAL_MS=${SCAMSHIELD_FEED_MIN_INTERVAL_MS:-300000}
+      - SCAMSHIELD_INGEST_RATE_PER_MINUTE=${SCAMSHIELD_INGEST_RATE_PER_MINUTE:-5}
     env_file:
       - ./backend/.env
     depends_on:
