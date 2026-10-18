@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /login
+Allow: /register
+Disallow: /app/
+Disallow: /api/
+
+Sitemap: https://fraudshield.app/sitemap.xml
