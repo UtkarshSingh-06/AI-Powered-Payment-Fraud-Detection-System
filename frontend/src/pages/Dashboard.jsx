@@ -12,6 +12,8 @@ import {
   Zap,
   Eye
 } from 'lucide-react';
+import { SkeletonPage } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -54,11 +56,7 @@ function Dashboard() {
   };
 
   if (loading) {
-    return (
-      <div className="loading">
-        <span className="loading-text">Loading dashboard...</span>
-      </div>
-    );
+    return <SkeletonPage title="Loading dashboard" rows={5} />;
   }
 
   const summary = dashboardData?.summary || {};
@@ -158,26 +156,27 @@ function Dashboard() {
           <div className="card-header-accent"></div>
         </div>
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Transaction ID</th>
-                <th>Merchant</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Risk Score</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentTransactions.length === 0 ? (
+          {recentTransactions.length === 0 ? (
+            <EmptyState
+              title="No transactions yet"
+              description="New scored payments will appear here as they flow through FraudShield."
+              actionLabel="View all transactions"
+              actionTo="/app/transactions"
+            />
+          ) : (
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                    No UPI transactions found
-                  </td>
+                  <th>Transaction ID</th>
+                  <th>Merchant</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Risk Score</th>
+                  <th>Date</th>
                 </tr>
-              ) : (
-                recentTransactions.map((transaction) => (
+              </thead>
+              <tbody>
+                {recentTransactions.map((transaction) => (
                   <tr key={transaction.transactionId}>
                     <td>
                       <code className="transaction-id">
@@ -198,10 +197,10 @@ function Dashboard() {
                     </td>
                     <td>{new Date(transaction.timestamp).toLocaleDateString()}</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
