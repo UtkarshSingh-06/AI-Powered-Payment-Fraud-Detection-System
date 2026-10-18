@@ -60,6 +60,69 @@ paths:
       responses:
         '200':
           description: Cases
+  /scamshield/indicators:
+    get:
+      summary: Search ScamShield threat indicators
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema: { type: integer }
+        - in: query
+          name: offset
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Paginated indicators (investigation only — not for auto-block)
+    post:
+      summary: Manually record an indicator (URL is never fetched)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Indicator recorded
+  /scamshield/indicators/{id}:
+    get:
+      summary: Indicator detail with source timeline, confidence explanation, relationships
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Indicator evidence package
+  /scamshield/ingest/{feed}:
+    post:
+      summary: Ingest from urlhaus or openphish (mocked payloads allowed in tests)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: feed
+          required: true
+          schema: { type: string, enum: [urlhaus, openphish] }
+      responses:
+        '200':
+          description: Ingest run result
+  /scamshield/investigations:
+    get:
+      summary: List ScamShield investigations
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Investigations
+    post:
+      summary: Create investigation
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201':
+          description: Created
 components:
   securitySchemes:
     bearerAuth:
