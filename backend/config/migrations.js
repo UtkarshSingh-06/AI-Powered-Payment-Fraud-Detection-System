@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { getPostgresPool, runQuery } from './postgres.js';
+import { runScamShieldMigrations } from './scamshieldMigrations.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCHEMA_PATH = join(__dirname, '..', 'scripts', 'enterprise-schema.sql');
@@ -23,5 +24,11 @@ export async function runEnterpriseMigrations() {
     console.log('✅ Enterprise schema migrations applied');
   } catch (error) {
     console.warn('Enterprise schema migration skipped:', error.message);
+  }
+
+  try {
+    await runScamShieldMigrations();
+  } catch (error) {
+    console.warn('ScamShield migration skipped:', error.message);
   }
 }
